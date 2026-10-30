@@ -1,0 +1,154 @@
+/* ===================== Gestaltung „Tinte & Papier“ =====================
+   Ebenen über Linien und Flächen statt Schatten; Hierarchie über Typografie; ein Akzent. */
+.mono, .anc, .pv-via, .md-line .lan, .pf-sid { font-family: var(--mono); }
+.card, .tb, .md-doc, .pdf-page, .img-wrap, .chip-f.on, .pv-tab.on { box-shadow: none; }
+.card { border-radius: var(--r); }
+.tb, .btn-ghost, .btn-primary, .side-foot button, .new-form input, .new-form select, .modal select, .modal input, .menu, .pv-close { border-radius: var(--r-sm); }
+.ic { width: 14px; height: 14px; flex: none; display: inline-block; vertical-align: -2px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Bewegung: kurz, ease-out, kein Springen */
+button, .ml-row, .say { transition: background-color .15s var(--ease-out), border-color .15s var(--ease-out), color .15s var(--ease-out), box-shadow .15s var(--ease-out), transform .15s var(--ease-out); }
+button:active:not(:disabled) { transform: scale(.98); }
+.ml-row:active, .say:active, .akte-item:active { transform: none; }
+.ml-chev .ic { transition: transform .15s var(--ease-out); }
+.ml-row.open .ml-chev .ic { transform: rotate(90deg); }
+
+/* Seitenleiste */
+.brand b { font-family: var(--serif); font-weight: 600; font-size: 23px; letter-spacing: -.01em; }
+.ver { font-family: var(--mono); font-weight: 500; font-size: 10.5px; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; vertical-align: 4px; }
+.side .new-btn { border: 1px solid var(--line); border-style: solid; background: var(--paper); color: var(--ink); border-radius: var(--r-sm); font-weight: 500; }
+.side .new-btn:hover { border-color: var(--ink); }
+.side-label { text-transform: none; font-variant-caps: all-small-caps; letter-spacing: .07em; font-size: 12.5px; color: var(--faint); }
+.akte-item { border: 0; border-left: 2px solid transparent; border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+.akte-item.active { background: var(--paper); border-left-color: var(--accent); }
+.akte-item.active .az { color: var(--accent); }
+.akte-item .az { font-family: var(--mono); font-size: 11px; }
+.akte-item .parties { font-family: var(--serif); font-size: 15px; font-weight: 600; }
+.btn-primary { background: var(--accent); }
+
+/* Kopfzeile */
+.rubrum .az-chip { border: 0; background: none; padding: 0; font-size: 12px; color: var(--muted); letter-spacing: .02em; }
+.rubrum h1 { font-family: var(--serif); font-weight: 600; font-size: 29px; letter-spacing: -.012em; margin-top: 2px; }
+.rubrum h1 .vs { font-style: italic; font-weight: 400; color: var(--faint); }
+.tb { background: var(--paper); }
+.tb:hover { background: var(--paper); border-color: color-mix(in srgb, var(--ink) 35%, var(--line)); }
+.tb.primary:hover { filter: none; background: var(--accent-strong); border-color: var(--accent-strong); }
+
+/* Filter und Ansicht als Reiter mit Unterstrich */
+.view-row { margin: 18px 28px 0; border-bottom: 1px solid var(--line); gap: 24px; align-items: flex-end; }
+.view-row .filters, .view-row .view-seg { margin: 0; padding: 0; background: none; border-radius: 0; gap: 20px; }
+.view-row .view-seg { margin-left: auto; }
+.note-btn { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+.note-btn:hover { text-decoration-color: currentColor; }
+.chip-f { padding: 8px 0 9px; margin-bottom: -1px; border-radius: 0; background: none; border-bottom: 2px solid transparent; font-size: 13px; color: var(--muted); }
+.chip-f:hover { color: var(--ink); }
+.chip-f.on { background: none; color: var(--ink); border-bottom-color: var(--accent); font-weight: 500; }
+@media (max-width: 860px) { .view-row { margin: 16px 16px 0; } }
+
+/* Hinweise: Linie statt farbiger Kasten */
+.banner, .banner.info, .banner.warn, .banner.err { background: none; border: 0; border-left: 2px solid; border-radius: 0; padding: 4px 0 4px 12px; }
+.banner.info { color: var(--muted); border-left-color: var(--line); }
+.banner.warn { color: var(--amber); border-left-color: var(--amber); }
+.banner.err { color: var(--red); border-left-color: var(--red); }
+.spin { border-color: var(--line); border-top-color: var(--accent); }
+
+/* Status als Text mit Farbmarke statt Pille */
+.st-badge { background: none; padding: 0; border-radius: 0; font-weight: 500; gap: 7px; font-size: 12.5px; }
+.st-badge::before { width: 7px; height: 7px; border-radius: 1px; }
+.s-nicht_vorgetragen.st-badge, .s-offen.st-badge { color: var(--muted); }
+
+/* Fundstellen, Marken */
+.anc { background: none; padding: 0; border-radius: 0; color: var(--muted); font-size: 11px; border-bottom: 1px dotted var(--faint); }
+.say:hover .anc { color: var(--ink); }
+.anc.fixed { background: none; color: var(--amber); }
+.say { border-radius: var(--r-sm); }
+.say:hover { background: var(--hover); }
+.say.active { background: var(--hl-bg); border-color: transparent; box-shadow: inset 2px 0 0 var(--hl-line); }
+.pm { background: none; border: 1px solid var(--line); border-radius: 3px; font-weight: 500; }
+.gap { background: none; padding: 0; border-radius: 0; color: var(--red); font-weight: 500; gap: 5px; }
+.new-tag, .flag.neu { background: var(--accent); color: var(--accent-ink); }
+.flag.geaendert { background: var(--law); color: var(--paper); }
+.verify { display: inline-flex; gap: 4px; align-items: center; }
+
+/* Gesamttabelle */
+table.st th { font-variant-caps: all-small-caps; letter-spacing: .06em; font-size: 12.5px; }
+table.st th:first-child, table.st th:last-child { border-radius: 0; }
+tr.group td { text-transform: none; font-variant-caps: all-small-caps; letter-spacing: .07em; font-size: 13px; color: var(--accent); }
+table.st th.th-kl, .proof-item .who.kl { color: var(--kl); }
+table.st th.th-bk, .proof-item .who.bk { color: var(--bk); }
+table.st td.side.kl { box-shadow: inset 2px 0 0 var(--kl-bg); }
+table.st td.side.bk { box-shadow: inset 2px 0 0 var(--bk-bg); }
+td.merk .inst { background: none; padding: 0; color: var(--muted); font-style: italic; }
+
+/* Eingeblendeter Antrag und Merkmalsliste */
+.ant-nr { background: none; padding: 0; font-family: var(--mono); text-transform: none; letter-spacing: .02em; font-weight: 500; color: var(--muted); font-size: 12px; margin-right: 10px; vertical-align: 3px; }
+.antrag-head .ant-title { font-family: var(--serif); font-size: 21px; font-weight: 600; }
+.antrag.minor .antrag-head .ant-title { font-size: 17px; }
+.antrag-head .ant-kick { font-weight: 500; }
+.ant-norm { font-family: var(--sans); font-size: 13px; margin-top: 4px; color: var(--ink); }
+.ant-norm b { font-weight: 600; }
+.ml-group { text-transform: none; font-variant-caps: all-small-caps; letter-spacing: .07em; font-size: 12.5px; color: var(--muted); }
+.ml-lbl .inst { background: none; padding: 0; color: var(--muted); font-style: italic; margin-left: 8px; }
+.ml-row.active { background: var(--accent-soft); box-shadow: inset 2px 0 0 var(--accent); }
+.ml-chev { display: inline-grid; place-items: center; height: 20px; }
+.ml-ind { font-size: 12px; }
+.ml-ok { color: var(--green); display: inline-flex; gap: 4px; align-items: center; }
+.ml-prog { color: var(--muted); font-variant-numeric: tabular-nums; }
+.ml-pins { color: var(--law); display: inline-flex; gap: 4px; align-items: center; }
+.ml-detail { border-top: 1px solid var(--line-soft); }
+.ml-side { border-radius: var(--r-sm); }
+.ml-side.kl { background: var(--kl-bg); border-left: 2px solid var(--kl); }
+.ml-side.bk { background: var(--bk-bg); border-left: 2px solid var(--bk); }
+.ml-side.kl .ml-h { color: var(--kl); }
+.ml-side.bk .ml-h { color: var(--bk); }
+.ml-h, .pf-lab { text-transform: none; font-variant-caps: all-small-caps; letter-spacing: .07em; font-size: 12.5px; }
+
+/* Prüfung im Seitenpanel */
+.pv-title b { font-family: var(--serif); font-size: 19px; font-weight: 600; letter-spacing: -.005em; }
+.pf-sec { text-transform: none; font-variant-caps: all-small-caps; letter-spacing: .07em; font-size: 13.5px; color: var(--accent); }
+.pf-steps { gap: 0; border-top: 1px solid var(--line); }
+.pf-step { background: none; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; padding: 12px 0 12px 12px; }
+.pf-step.pf-erfuellt { box-shadow: inset 2px 0 0 var(--green); }
+.pf-step.pf-nicht_erfuellt { box-shadow: inset 2px 0 0 var(--red); }
+.pf-sid { background: none; padding: 0; color: var(--muted); }
+.pf-txt { font-weight: 500; }
+.pf-seg { border-radius: var(--r-sm); }
+.pf-seg button.on.s-offen { background: var(--well); }
+.pf-ctrl { border-radius: var(--r); background: var(--paper); }
+.pf-streit { border-radius: var(--r-sm); }
+.pf-src { background: none; border: 1px solid var(--line); border-radius: 3px; }
+.pf-az-miss { border-radius: 0; background: none; border: 0; border-left: 2px solid var(--amber); }
+
+/* Rechtsprechung */
+.rsp-btn { color: var(--law); display: inline-flex; gap: 5px; align-items: center; }
+.rsp-pins { gap: 2px; }
+.rsp-pin { background: none; border: 0; padding: 2px 0; color: var(--law); display: inline-flex; gap: 6px; align-items: center; border-radius: 0; }
+.rsp-pin:hover { border: 0; text-decoration: underline; text-underline-offset: 2px; }
+.rsp-hit { border-radius: var(--r-sm); }
+.rsp-hit.pinned { border-color: var(--line); box-shadow: inset 2px 0 0 var(--accent); }
+.rsp-title { font-family: var(--serif); font-size: 15.5px; }
+.rsp-meta b { color: var(--ink); }
+.rsp-act button, .rsp-act a { color: var(--ink); display: inline-flex; gap: 5px; align-items: center; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+.rsp-act button:hover, .rsp-act a:hover { text-decoration-color: currentColor; }
+.rsp-act .pin-on { color: var(--accent); }
+.rsp-q { border-radius: 4px; }
+.src-badge { background: none; border: 1px solid var(--line); color: var(--muted); font-weight: 500; letter-spacing: 0; border-radius: 4px; }
+.src-badge.pf-skript { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.rsp-doc { border-radius: var(--r-sm); font-family: var(--serif); font-size: 15px; }
+
+/* Dokument, Leerzustand, Dialoge */
+.md-doc { border-radius: var(--r-sm); font-family: var(--serif); font-size: 15.5px; line-height: 1.6; }
+.md-doc h2 { font-weight: 600; }
+.pv-tab.on { background: var(--paper); }
+.empty h2 { font-family: var(--serif); font-weight: 600; font-size: 32px; letter-spacing: -.01em; }
+.steps div { border-radius: var(--r-sm); }
+.steps i { background: none; border: 1px solid var(--line); color: var(--ink); font-family: var(--mono); font-weight: 500; }
+.modal { border-radius: var(--r); }
+.modal h3 { font-family: var(--serif); font-size: 21px; font-weight: 600; }
+.docs-panel th { font-variant-caps: all-small-caps; letter-spacing: .06em; font-size: 12.5px; }
+.court { color: var(--law); }
+
+@media (prefers-reduced-motion: reduce) {
+  button, .ml-row, .say, .ml-chev .ic { transition: none; }
+  button:active:not(:disabled) { transform: none; }
+}

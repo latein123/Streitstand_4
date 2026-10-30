@@ -1,0 +1,51 @@
+/* Main */
+main.main { min-width: 0; display: flex; flex-direction: column; min-height: 0; }
+.topbar { padding: 20px 28px 0; display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.rubrum { min-width: 0; flex: 1 1 280px; }
+.rubrum .az-chip { display: inline-block; font-size: 11.5px; color: var(--muted); background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 1px 7px; }
+.rubrum h1 { margin: 6px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -.02em; line-height: 1.25; }
+.rubrum h1 .vs { color: var(--faint); font-weight: 500; margin: 0 6px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tb { padding: 7px 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--paper); font-size: 13px; font-weight: 500; box-shadow: 0 1px 1px rgba(15,23,42,.03); display: inline-flex; align-items: center; gap: 6px; }
+.tb:hover { background: var(--hover); }
+.tb.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+.tb.primary:hover { filter: brightness(1.06); background: var(--accent); }
+.tb.danger { color: var(--red); }
+.tb.icon { padding: 7px 9px; }
+.tb:disabled { opacity: .45; cursor: default; }
+.show-side { display: none; }
+.app.with-preview .show-side { display: inline-flex; }
+.more { position: relative; }
+.menu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 20; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-lg); padding: 6px; min-width: 210px; }
+.menu button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 8px 10px; border-radius: 8px; font-size: 13px; }
+.menu button:hover:not(:disabled) { background: var(--hover); }
+.menu button:disabled { opacity: .45; cursor: default; }
+.menu hr { border: 0; border-top: 1px solid var(--line); margin: 5px 4px; }
+.menu-h { font-size: 11.5px; color: var(--muted); padding: 4px 10px 2px; }
+.menu-check { display: flex; gap: 8px; align-items: center; padding: 6px 10px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+.menu-check:hover { background: var(--hover); }
+.filters { display: inline-flex; gap: 2px; padding: 3px; margin: 16px 28px 0; background: var(--gray-bg); border-radius: 10px; align-self: flex-start; flex-wrap: wrap; }
+.chip-f { padding: 5px 12px; border-radius: 8px; border: 0; background: transparent; font-size: 12.5px; font-weight: 500; color: var(--muted); }
+.chip-f.on { background: var(--paper); color: var(--ink); box-shadow: 0 1px 2px rgba(15,23,42,.08); }
+.chip-f .n { color: var(--faint); margin-left: 4px; font-weight: 500; }
+.view-row { display: flex; flex-wrap: wrap; align-items: flex-start; margin-right: 28px; }
+.view-row .view-seg { margin-left: auto; }
+@media (max-width: 860px) { .view-row { margin-right: 16px; } .view-row .view-seg { margin-left: 16px; } }
+.content { flex: 1; overflow: auto; padding: 16px 28px 48px; }
+.banner { padding: 10px 14px; border-radius: 10px; margin-bottom: 12px; font-size: 13px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.banner.info { background: var(--accent-soft); border: 1px solid var(--accent-line); color: var(--accent-strong); }
+.banner.warn { background: var(--amber-bg); border: 1px solid var(--amber-line); color: var(--amber); }
+.banner.err { background: var(--red-bg); border: 1px solid var(--red-bg); color: var(--red); }
+.spin { width: 16px; height: 16px; border: 2px solid var(--accent-line); border-top-color: var(--accent); border-radius: 50%; animation: sp 0.8s linear infinite; flex: none; }
+@keyframes sp { to { transform: rotate(360deg); } }
+
+.empty { max-width: 560px; margin: 8vh auto; text-align: center; color: var(--muted); }
+.empty .logo { width: 52px; height: 52px; border-radius: 14px; font-size: 24px; margin: 0 auto 16px; }
+.logo-mark { width: 112px; height: 112px; flex: none; display: block; overflow: visible; }
+.empty .logo-mark { width: 176px; height: 176px; margin: 0 auto 18px; }
+.empty h2 { color: var(--ink); font-size: 22px; letter-spacing: -.02em; margin: 0 0 8px; }
+.steps { text-align: left; display: grid; gap: 8px; margin: 22px 0; }
+.steps div { display: flex; gap: 10px; align-items: center; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; color: var(--ink); }
+.steps i { font-style: normal; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-strong); display: grid; place-items: center; font-size: 12px; font-weight: 700; flex: none; }
+.small { font-size: 12px; color: var(--muted); }
+

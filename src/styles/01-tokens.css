@@ -1,0 +1,39 @@
+/* Layout: Aktenliste links · Streitstand Mitte · Originaldokument rechts (immer als Seitenpanel) */
+/* Farbkonzept „Tinte & Papier“: Papierflächen, Tinte als Text, Bordeaux als einziger Akzent */
+:root {
+  --bg: #f7f5f0; --paper: #ffffff; --raise: #fbfaf7; --ink: #1c1f26; --muted: #5e5a52; --faint: #8a8579;
+  --line: #e4dfd5; --line-soft: #eeeae2; --hover: #f3f0ea; --well: #f1eee7;
+  --accent: #7a2230; --accent-ink: #ffffff; --accent-soft: #f6ecec; --accent-line: #e2c6ca; --accent-strong: #5e1824;
+  --side: #fbfaf7; --overlay: rgba(28, 31, 38, .36);
+  --green: #3d6b4f; --green-bg: #eaf1ec; --red: #a33a2b; --red-bg: #f8eae6; --orange: #8a5d17; --orange-bg: #f7f0e3;
+  --amber: #8a6516; --amber-bg: #f8f1de; --amber-line: #e7d5a6; --law: #3e4f66; --law-bg: #eceff3; --gray-bg: #efece5;
+  --kl: #2b4a6f; --kl-bg: #edf1f6; --bk: #8a5d17; --bk-bg: #f7f0e3;
+  --hl-bg: #fbf3d9; --hl-line: #e5cf85; --mark: rgba(240, 190, 40, .42);
+  --shadow: none; --shadow-lg: 0 14px 40px rgba(28, 31, 38, .14);
+  --serif: Newsreader, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: "IBM Plex Sans", -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --ease-out: cubic-bezier(.23, 1, .32, 1); --r-sm: 6px; --r: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15171b; --paper: #1c1f24; --raise: #202329; --ink: #ece8e1; --muted: #aaa499; --faint: #7f7a70;
+  --line: #2f3239; --line-soft: #26292f; --hover: #24272d; --well: #18191d;
+  --accent: #d38a94; --accent-ink: #15171b; --accent-soft: #2e1f23; --accent-line: #5a3138; --accent-strong: #e8b2b9;
+  --side: #18191d; --overlay: rgba(0, 0, 0, .55);
+  --green: #8fc09e; --green-bg: #1c2a21; --red: #e8907f; --red-bg: #331e1a; --orange: #d6a55a; --orange-bg: #2c2418;
+  --amber: #d9b45e; --amber-bg: #2d2615; --amber-line: #5a4a22; --law: #aebbd0; --law-bg: #232933; --gray-bg: #26292f;
+  --kl: #94b3d8; --kl-bg: #1e2632; --bk: #d6a55a; --bk-bg: #2c2418;
+  --hl-bg: #3a3216; --hl-line: #6e5d23; --mark: rgba(240, 190, 40, .38);
+  --shadow: none; --shadow-lg: 0 14px 40px rgba(0, 0, 0, .5);
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #15171b; --paper: #1c1f24; --raise: #202329; --ink: #ece8e1; --muted: #aaa499; --faint: #7f7a70;
+  --line: #2f3239; --line-soft: #26292f; --hover: #24272d; --well: #18191d;
+  --accent: #d38a94; --accent-ink: #15171b; --accent-soft: #2e1f23; --accent-line: #5a3138; --accent-strong: #e8b2b9;
+  --side: #18191d; --overlay: rgba(0, 0, 0, .55);
+  --green: #8fc09e; --green-bg: #1c2a21; --red: #e8907f; --red-bg: #331e1a; --orange: #d6a55a; --orange-bg: #2c2418;
+  --amber: #d9b45e; --amber-bg: #2d2615; --amber-line: #5a4a22; --law: #aebbd0; --law-bg: #232933; --gray-bg: #26292f;
+  --kl: #94b3d8; --kl-bg: #1e2632; --bk: #d6a55a; --bk-bg: #2c2418;
+  --hl-bg: #3a3216; --hl-line: #6e5d23; --mark: rgba(240, 190, 40, .38);
+  --shadow: none; --shadow-lg: 0 14px 40px rgba(0, 0, 0, .5);
+  color-scheme: dark; }

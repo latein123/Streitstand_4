@@ -1,0 +1,12 @@
+/* Reihenfolge ist wichtig: spätere Dateien überschreiben frühere (wie im Original-<style>). */
+@import './01-tokens.css';
+@import './02-base.css';
+@import './03-sidebar.css';
+@import './04-main.css';
+@import './05-streit-tabelle.css';
+@import './06-vorschau.css';
+@import './07-modal-responsive.css';
+@import './08-hilfsklassen.css';
+@import './09-antraege.css';
+@import './10-pruefung-rechtsprechung.css';
+@import './11-gestaltung-tinte-papier.css';

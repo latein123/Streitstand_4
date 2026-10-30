@@ -1,0 +1,11 @@
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { font-family: var(--sans); font-size: 14px; line-height: 1.45; color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; font-feature-settings: "cv11", "ss01"; }
+button { font: inherit; cursor: pointer; color: inherit; }
+input, select, textarea { font: inherit; color: var(--ink); }
+.mono { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; }
+.app { display: grid; grid-template-columns: 264px minmax(0, 1fr); height: 100%; transition: grid-template-columns .2s ease; }
+.app.with-preview { grid-template-columns: 0 minmax(0, 1fr) min(max(44vw, 380px), 760px); }
+.app.with-preview aside.side { overflow: hidden; border-right: 0; }
+
+#root { height: 100%; }

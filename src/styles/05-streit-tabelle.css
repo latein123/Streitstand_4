@@ -1,0 +1,105 @@
+/* Streitstand-Tabelle */
+.card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+/* Kein seitliches Scrollen: Tabelle passt sich der Breite an, bei wenig Platz (z. B. offene Vorschau) als Karten */
+.table-wrap { container-type: inline-size; }
+table.st { width: 100%; border-collapse: separate; border-spacing: 0; }
+table.st td { overflow-wrap: break-word; hyphens: auto; }
+table.st th { position: sticky; top: 0; z-index: 2; background: var(--paper); text-align: left; font-size: 11.5px; font-weight: 600; color: var(--muted); padding: 12px 14px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+table.st th:first-child { border-top-left-radius: 14px; }
+table.st th:last-child { border-top-right-radius: 14px; }
+table.st td { vertical-align: top; padding: 14px; font-size: 13.5px; border-bottom: 1px solid var(--line-soft); }
+table.st tbody tr:not(.group):hover td { background: var(--raise); }
+table.st tbody tr:last-child td { border-bottom: 0; }
+tr.group td { padding: 18px 14px 8px; border-bottom: 1px solid var(--line-soft); font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-strong); background: var(--paper); }
+tr.group td .cnt { color: var(--faint); font-weight: 600; margin-left: 6px; }
+td.merk { width: 18%; min-width: 160px; }
+td.merk .lbl { font-weight: 600; letter-spacing: -.005em; }
+td.merk .inst { display: inline-block; margin-top: 5px; font-size: 12px; color: var(--accent-strong); background: var(--accent-soft); border-radius: 6px; padding: 1px 7px; }
+td.merk .norm { color: var(--faint); font-size: 12px; margin-top: 4px; }
+td.side { width: 22%; }
+.item { margin-bottom: 6px; }
+.item:last-child { margin-bottom: 0; }
+.say { display: block; width: 100%; text-align: left; border: 1px solid transparent; background: transparent; padding: 5px 8px; margin: -5px -8px; border-radius: 8px; line-height: 1.45; transition: background .12s; }
+.say:hover { background: var(--accent-soft); }
+.say.active { background: var(--hl-bg); border-color: var(--hl-line); }
+.anc { display: inline-block; font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: 10.5px; color: var(--accent); background: var(--accent-soft); border-radius: 5px; padding: 0 5px; margin-left: 5px; white-space: nowrap; vertical-align: 1px; }
+.anc.fixed { color: var(--amber); background: var(--amber-bg); }
+.new-tag { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .04em; color: #fff; background: var(--accent); border-radius: 4px; padding: 0 5px; margin-left: 5px; vertical-align: 1px; }
+.none { color: var(--faint); font-size: 13px; }
+td.status { width: 1%; white-space: nowrap; }
+.st-badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 1.4; cursor: default; }
+.st-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.s-unstreitig, .s-nicht_bestritten { background: var(--green-bg); color: var(--green); }
+.s-bestritten { background: var(--red-bg); color: var(--red); }
+.s-nichtwissen { background: var(--orange-bg); color: var(--orange); }
+.s-pauschal { background: var(--amber-bg); color: var(--amber); }
+.s-rechtsfrage { background: var(--law-bg); color: var(--law); }
+.s-nicht_vorgetragen, .s-offen { background: var(--gray-bg); color: var(--muted); }
+td.last { width: 1%; white-space: nowrap; }
+.last-who { font-weight: 500; cursor: default; }
+.last-who.muted { color: var(--faint); }
+td.proof { width: 30%; }
+.proof-item { display: flex; gap: 6px; align-items: flex-start; }
+.proof-item + .proof-item { margin-top: 6px; }
+.proof-item .who { flex: none; font-size: 10.5px; font-weight: 600; color: var(--faint); width: 30px; padding-top: 3px; }
+.proof-item .item { flex: 1; min-width: 0; }
+.pm { display: inline-block; font-size: 10.5px; font-weight: 600; color: var(--muted); background: var(--gray-bg); border-radius: 5px; padding: 0 6px; margin-right: 5px; vertical-align: 1px; }
+.gap { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; font-size: 11.5px; color: var(--red); background: var(--red-bg); border-radius: 6px; padding: 2px 8px; font-weight: 600; }
+.flag { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .04em; border-radius: 4px; padding: 0 5px; margin-left: 6px; vertical-align: 2px; }
+.flag.neu { background: var(--accent); color: #fff; }
+.flag.geaendert { background: var(--law); color: #fff; }
+
+/* Parteifarben: Kläger blau, Beklagter orange – in Tabelle, Karten und Beweisangeboten */
+table.st th.th-kl { color: var(--accent); }
+table.st th.th-bk { color: var(--orange); }
+table.st td.side.kl { box-shadow: inset 3px 0 0 var(--accent-line); }
+table.st td.side.bk { box-shadow: inset 3px 0 0 var(--orange-bg); }
+.proof-item .who.kl { color: var(--accent); }
+.proof-item .who.bk { color: var(--orange); }
+/* Kartenansicht bei wenig Platz (z. B. offene Vorschau) */
+@container (max-width: 760px) {
+  table.st thead { display: none; }
+  table.st, table.st tbody { display: block; }
+  table.st tbody tr:not(.group) {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 10px; row-gap: 8px;
+    grid-template-areas: "merk merk" "status last" "kl bk" "proof proof";
+    padding: 14px 16px 16px; border-bottom: 1px solid var(--line);
+  }
+  table.st tbody tr:not(.group):hover td { background: transparent; }
+  table.st tbody tr:last-child { border-bottom: 0; }
+  table.st tr.group { display: block; }
+  table.st tr.group td { display: block; padding: 16px 16px 6px; }
+  table.st td { display: block; width: auto; border-bottom: 0; padding: 0; }
+  table.st td.merk { grid-area: merk; }
+  table.st td.status { grid-area: status; white-space: normal; }
+  table.st td.last { grid-area: last; white-space: normal; }
+  table.st td.status::before, table.st td.last::before { content: attr(data-label) ":"; font-size: 11px; font-weight: 600; color: var(--muted); margin-right: 6px; }
+  table.st td.side { border-radius: 10px; padding: 10px 12px 12px; box-shadow: none; }
+  table.st td.side.kl { grid-area: kl; background: var(--accent-soft); border-left: 3px solid var(--accent); }
+  table.st td.side.bk { grid-area: bk; background: var(--orange-bg); border-left: 3px solid var(--orange); }
+  table.st td.side::before { content: attr(data-label); display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+  table.st td.side.kl::before { color: var(--accent); }
+  table.st td.side.bk::before { color: var(--orange); }
+  table.st td.side .say:hover { background: var(--paper); }
+  table.st td.proof { grid-area: proof; padding-top: 4px; }
+  table.st td.proof::before { content: attr(data-label); display: block; font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+}
+@container (max-width: 480px) {
+  table.st tbody tr:not(.group) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "merk" "status" "last" "kl" "bk" "proof"; }
+}
+details.discard { margin-top: 16px; padding: 12px 16px; }
+details.discard summary { cursor: pointer; font-weight: 600; color: var(--muted); font-size: 13px; }
+details.discard li { margin: 6px 0; font-size: 13px; }
+.q { font-style: italic; color: var(--muted); }
+
+.docs-panel { margin-bottom: 14px; overflow: hidden; }
+.docs-panel table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.docs-panel th, .docs-panel td { text-align: left; padding: 8px 14px; border-bottom: 1px solid var(--line-soft); }
+.docs-panel th { font-size: 11.5px; font-weight: 600; color: var(--muted); }
+.docs-panel tr:last-child td { border-bottom: 0; }
+.docs-panel .open { background: none; border: 0; color: var(--accent); padding: 0; text-align: left; font-weight: 500; }
+.read { font-size: 12px; font-weight: 600; }
+.read.ok { color: var(--green); }
+.read.bad { color: var(--amber); }
+.fmt { display: inline-block; font-size: 10.5px; font-weight: 600; background: var(--gray-bg); border-radius: 4px; padding: 0 5px; margin-right: 3px; color: var(--muted); }
+
