@@ -4,7 +4,7 @@
 
 Diese Dokumentation beschreibt die Anwendung in der Datei [`streitstand_v3_1.html`](streitstand_v3_1.html). Sie richtet sich in erster Linie an **Juristinnen und Juristen**, die mit der Anwendung arbeiten, ihre Ergebnisse einordnen oder das hinterlegte rechtliche Regelmodell prüfen sollen.
 
-> **Zur Lesart:** Technische Einzelheiten, die nur für die Wartung und Weiterentwicklung wichtig sind, stehen in aufklappbaren Kästen mit der Überschrift **„🔧 Exkurs für Informatiker“**. Diese Kästen können Sie überspringen; für das Verständnis der Anwendung sind sie nicht nötig. Am Ende befindet sich zusätzlich ein zusammenhängender [technischer Anhang](#11-technischer-anhang-exkurs-für-informatiker).
+> **Zur Lesart:** Technische Einzelheiten, die nur für die Wartung und Weiterentwicklung wichtig sind, stehen in aufklappbaren Kästen mit der Überschrift **„🔧 Exkurs für Informatiker“**. Diese Kästen können Sie überspringen; für das Verständnis der Anwendung sind sie nicht nötig. Am Ende befindet sich zusätzlich ein zusammenhängender [technischer Anhang](#12-technischer-anhang-exkurs-für-informatiker).
 
 ---
 
@@ -18,10 +18,11 @@ Diese Dokumentation beschreibt die Anwendung in der Datei [`streitstand_v3_1.htm
 6. [Prüfung eines Merkmals (Prüfungsschema)](#6-prüfung-eines-merkmals-prüfungsschema)
 7. [Rechtsprechungsrecherche](#7-rechtsprechungsrecherche)
 8. [Begründungsgerüst](#8-begründungsgerüst)
-9. [Datenschutz, Vertraulichkeit, Speicherort](#9-datenschutz-vertraulichkeit-speicherort)
-10. [Grenzen und Fehlerquellen](#10-grenzen-und-fehlerquellen)
-11. [Technischer Anhang (Exkurs für Informatiker)](#11-technischer-anhang-exkurs-für-informatiker)
-12. [Glossar](#12-glossar)
+9. [Prozessdiagramme der juristischen Logik](#9-prozessdiagramme-der-juristischen-logik)
+10. [Datenschutz, Vertraulichkeit, Speicherort](#10-datenschutz-vertraulichkeit-speicherort)
+11. [Grenzen und Fehlerquellen](#11-grenzen-und-fehlerquellen)
+12. [Technischer Anhang (Exkurs für Informatiker)](#12-technischer-anhang-exkurs-für-informatiker)
+13. [Glossar](#13-glossar)
 
 ---
 
@@ -42,6 +43,8 @@ Ergänzend bietet die Anwendung
 - ein **Prüfungsschema** je Merkmal (Obersatz, Definition, Prüfschritte, Streitstände), in dem das Gericht Prüfvermerke setzen kann,
 - eine **Recherche in der amtlichen Rechtsprechungsdatenbank des Bundes**,
 - ein druckbares **Begründungsgerüst** als Gliederung für die Entscheidungsgründe.
+
+Einen Gesamtüberblick über den Ablauf und das Prüfprogramm geben die **Prozessdiagramme in [Abschnitt 9](#9-prozessdiagramme-der-juristischen-logik)**.
 
 Derzeit sind zwei Verfahrensarten hinterlegt:
 
@@ -128,7 +131,7 @@ Klagepartei = Vermieter, beklagte Partei = Mieter.
 | **G2 Eigenbedarf** | Bedarfsperson (Angehörige) | § 573 Abs. 2 Nr. 2 BGB | Vermieter | |
 | | Ernsthafter Nutzungswille | § 573 Abs. 2 Nr. 2 BGB | Vermieter | |
 | | Vernünftige, nachvollziehbare Gründe | § 573 Abs. 2 Nr. 2 BGB | Vermieter | |
-| | Alternativwohnung / Anbietpflicht | § 242 BGB (Rechtsmissbrauch) | Mieter | sekundäre Darlegungslast des Vermieters zu seinem Wohnungsbestand; ⚑ zu verifizieren |
+| | Alternativwohnung / Anbietpflicht | § 242 BGB (Rechtsmissbrauch) | Mieter | sekundäre Darlegungslast des Vermieters zu seinem Wohnungsbestand; ⚑ zu verifizieren – siehe den Hinweis zur BGH-Rechtsprechung in [9.7](#97-prüfungsaufbau-räumung-nach-eigenbedarfskündigung) |
 | | Kündigungssperre nach Umwandlung | § 577a BGB | Mieter | |
 | **G3 Widerspruch und Härte** | Widerspruch: Form und Frist | § 574b BGB (Hinweis § 568 Abs. 2) | Mieter | |
 | | Härtegründe | § 574 Abs. 1 BGB | Mieter | |
@@ -288,7 +291,7 @@ Damit die KI keine Fundstellen erfindet, wird **jedes Zitat automatisch gegen de
 
 Beim Vergleich zählen nur Buchstaben und Ziffern; Groß-/Kleinschreibung, Satzzeichen, Zeilenumbrüche, Silbentrennung und Anführungszeichen werden ignoriert. Auslassungen im Zitat („…“, „[…]“) sind erlaubt, sofern die Teilstücke in der richtigen Reihenfolge vorkommen.
 
-**Wichtig:** Der Anker-Wächter stellt sicher, dass das **Zitat** in der Akte steht. Er prüft **nicht**, ob die **Kurzfassung** der KI das Zitat zutreffend wiedergibt, ob der **Status** richtig gewählt ist oder ob das Zitat zum Merkmal passt. Diese Kontrolle bleibt beim Gericht (siehe Abschnitt 10).
+**Wichtig:** Der Anker-Wächter stellt sicher, dass das **Zitat** in der Akte steht. Er prüft **nicht**, ob die **Kurzfassung** der KI das Zitat zutreffend wiedergibt, ob der **Status** richtig gewählt ist oder ob das Zitat zum Merkmal passt. Diese Kontrolle bleibt beim Gericht (siehe Abschnitt 11).
 
 <details>
 <summary>🔧 Exkurs für Informatiker: Zitatsuche</summary>
@@ -497,7 +500,643 @@ Zitiert werden ausschließlich angeheftete Entscheidungen aus der amtlichen Date
 
 ---
 
-## 9. Datenschutz, Vertraulichkeit, Speicherort
+## 9. Prozessdiagramme der juristischen Logik
+
+Die folgenden Diagramme zeigen Schritt für Schritt, wie die Anwendung vom Akteninhalt zum Streitstand gelangt und wie das hinterlegte Prüfprogramm aufgebaut ist. Auf GitHub werden sie automatisch als Grafik angezeigt. In Programmen ohne Diagrammunterstützung erscheint stattdessen der Quelltext; die Lesehilfe unter jedem Diagramm fasst den Inhalt deshalb auch in Worten zusammen.
+
+**Farblegende** – sie gilt für alle Diagramme dieses Abschnitts:
+
+| Farbe | Bedeutung |
+|---|---|
+| 🟦 Blau | **feste Regel** der Anwendung oder des Regelmodells – führt bei gleicher Akte immer zum gleichen Ergebnis |
+| 🟪 Violett | **Vorschlag der KI** – vom Gericht zu kontrollieren |
+| 🟩 Grün | **Prüfung, Korrektur oder Entscheidung durch das Gericht** |
+| 🟨 Gelb | **Prüfhinweis** – verdient besondere Aufmerksamkeit |
+| 🟥 Rot | **ausgesondert** bzw. in den Prüfungsabläufen: **Anspruch scheitert (insoweit)** |
+
+Rauten (◇) sind Entscheidungsfragen, Rechtecke sind Arbeitsschritte oder Ergebnisse. „BL“ steht für Beweislast, „⚑“ für „vom Team zu verifizieren“.
+
+### 9.1 Gesamtablauf
+
+```mermaid
+flowchart TD
+  classDef regel fill:#dbeafe,stroke:#2563eb,color:#0f172a
+  classDef ki fill:#ede9fe,stroke:#7c3aed,color:#0f172a
+  classDef gericht fill:#dcfce7,stroke:#16a34a,color:#0f172a
+  classDef hinweis fill:#fef3c7,stroke:#d97706,color:#0f172a
+  classDef aus fill:#fee2e2,stroke:#dc2626,color:#0f172a
+
+  subgraph P1["① Akte aufbereiten"]
+    A["Akte: Schriftsätze und Anlagen"]:::regel
+    B["Text gewinnen<br/>Textdatei · PDF-Textebene · Texterkennung"]:::regel
+    V{"Verfahrensart"}:::regel
+    RM1["Regelmodell Mietminderung<br/>Kläger = Mieter"]:::regel
+    RM2["Regelmodell Räumung<br/>Kläger = Vermieter"]:::regel
+    R{"Rolle je Dokument"}:::regel
+    RK["Schriftsatz Klagepartei"]:::regel
+    RB["Schriftsatz beklagte Partei"]:::regel
+    RA["Anlage / Sonstiges"]:::regel
+    A --> B
+    B --> V
+    V -->|"Minderung"| RM1
+    V -->|"Räumung"| RM2
+    B --> R
+    R --> RK
+    R --> RB
+    R --> RA
+  end
+  GK["Gericht kann Verfahrensart<br/>und Rollen korrigieren"]:::gericht
+  GK -.-> V
+  GK -.-> R
+
+  subgraph P2["② Vortrag erfassen"]
+    E["je Prüfungsgruppe und Merkmal:<br/>Vortrag Kläger · Erwiderung Beklagter<br/>Beweisangebote · Status mit Begründung"]:::ki
+    AN["Anträge beider Parteien"]:::ki
+    WP["bis zu 4 weitere<br/>streitige Punkte"]:::ki
+  end
+  RM1 --> E
+  RM2 --> E
+  RK --> E
+  RB --> E
+  RA --> E
+
+  subgraph P3["③ Belege prüfen"]
+    W{"Zitat wörtlich<br/>in der Akte?"}:::regel
+    X["verworfen –<br/>nur unter „Verworfene KI-Angaben“"]:::aus
+    OK["übernommen<br/>mit Fundstelle"]:::regel
+    FX["übernommen,<br/>Fundstelle korrigiert"]:::hinweis
+    SE["Vortrag aus einem Schriftsatz<br/>→ Spalte der einreichenden Partei"]:::regel
+    KE{"Schriftsatz der beklagten<br/>Partei vorhanden?"}:::regel
+    OF["Status → offen"]:::regel
+    KV["Status-Vorschlag bleibt"]:::ki
+    RZ["eine Zeile je Merkmal des Regelmodells;<br/>ohne Fundstelle: „nicht vorgetragen –<br/>bitte selbst prüfen“"]:::hinweis
+    W -->|"nein"| X
+    W -->|"ja, im genannten Dokument"| OK
+    W -->|"ja, in anderem Dokument"| FX
+    OK --> SE
+    FX --> SE
+    SE --> KE
+    KE -->|"nein"| OF
+    KE -->|"ja"| KV
+    OF --> RZ
+    KV --> RZ
+  end
+  E --> W
+  AN --> W
+  WP --> W
+
+  subgraph P4["④ Relation"]
+    ST["wirksamer Status"]:::regel
+    BB{"beweisbedürftig?"}:::regel
+    NB["kein Beweisthema"]:::regel
+    BL["beweisbelastete Partei<br/>laut Regelmodell"]:::regel
+    LU{"Beweisangebot<br/>dieser Partei?"}:::regel
+    GAP["⚠ Beweislücke<br/>Prüfhinweis"]:::hinweis
+    BEW["Beweisangebot<br/>vorhanden"]:::regel
+    ST --> BB
+    BB -->|"nein"| NB
+    BB -->|"ja"| BL
+    BL --> LU
+    LU -->|"nein"| GAP
+    LU -->|"ja"| BEW
+  end
+  RZ --> ST
+
+  subgraph P5["⑤ Gericht"]
+    G1["Fundstellen am Original prüfen"]:::gericht
+    G2["Status korrigieren · Prüfschritte<br/>bewerten · Notizen"]:::gericht
+    G3["Rechtsprechung aus der amtlichen<br/>Datenbank prüfen und anheften"]:::gericht
+    G1 --> G2 --> G3
+  end
+  NB --> G1
+  GAP --> G1
+  BEW --> G1
+  G2 -.->|"Korrektur"| ST
+
+  OUT["Begründungsgerüst<br/>Gliederung nach Anträgen, ohne KI-Würdigung"]:::regel
+  WU["Würdigung und Entscheidung<br/>durch das Gericht"]:::gericht
+  G3 --> OUT --> WU
+  style P1 fill:none,stroke:#94a3b8
+  style P2 fill:none,stroke:#94a3b8
+  style P3 fill:none,stroke:#94a3b8
+  style P4 fill:none,stroke:#94a3b8
+  style P5 fill:none,stroke:#94a3b8
+```
+
+**Lesehilfe:**
+
+1. **Akte aufbereiten:** Aus allen Dateien wird Text gewonnen. Die Verfahrensart bestimmt, welches Regelmodell (Merkmale, Normen, Beweislast) gilt. Jedes Dokument erhält eine Rolle – Schriftsatz einer Partei oder Anlage (Einzelheiten in 9.2). Beides kann das Gericht korrigieren.
+2. **Vortrag erfassen:** Die KI ordnet den Vortrag den Merkmalen zu, schlägt einen Status vor und erfasst Beweisangebote und Anträge.
+3. **Belege prüfen:** Jedes Zitat wird gegen die Akte geprüft; nicht auffindbare Angaben werden ausgesondert. Danach greifen feste Regeln: Vortrag aus einem Schriftsatz wird immer der einreichenden Partei zugeordnet; ohne Klageerwiderung ist jeder Status „offen“; jedes Merkmal erhält eine Zeile.
+4. **Relation:** Aus dem Status folgt die Beweisbedürftigkeit, aus dem Regelmodell die Beweislast, aus beidem gegebenenfalls ein Hinweis auf eine Beweislücke.
+5. **Gericht:** Das Gericht prüft die Fundstellen, korrigiert den Status (die Korrektur wirkt zurück auf Schritt 4), bewertet die Prüfschritte und heftet Rechtsprechung an. Das Begründungsgerüst fasst dies als Gliederung zusammen; die Würdigung bleibt dem Gericht vorbehalten.
+
+### 9.2 Rolle eines Dokuments: Schriftsatz oder Anlage?
+
+```mermaid
+flowchart TD
+  classDef regel fill:#dbeafe,stroke:#2563eb,color:#0f172a
+  classDef gericht fill:#dcfce7,stroke:#16a34a,color:#0f172a
+
+  D["Dokument der Akte"]:::regel
+  MAN{"Rolle vom Gericht in der<br/>Dokumentübersicht festgelegt?"}:::gericht
+  MR["festgelegte Rolle gilt"]:::gericht
+  T{"Titel oder Dateiname enthält …"}:::regel
+  GD{"Kopf des Dokuments: Gericht und<br/>Beschluss, Verfügung, Urteil oder<br/>Protokoll – ohne Rechtsanwalt?"}:::regel
+  TX{"Welche typische Formulierung<br/>steht im Text zuerst?"}:::regel
+  SK["Schriftsatz der Klagepartei"]:::regel
+  SB["Schriftsatz der beklagten Partei"]:::regel
+  AS["Anlage / Sonstiges"]:::regel
+
+  D --> MAN
+  MAN -->|"ja"| MR
+  MAN -->|"nein: automatische Erkennung"| T
+  T -->|"Erwiderung · Duplik ·<br/>Schriftsatz des Beklagten"| SB
+  T -->|"Klageschrift · Replik · Klage ·<br/>Räumungsklage · Schriftsatz des Klägers"| SK
+  T -->|"nichts davon"| GD
+  GD -->|"ja: gerichtliches Dokument"| AS
+  GD -->|"nein"| TX
+  TX -->|"in Vollmacht des Beklagten ·<br/>die Klage abzuweisen · vertreten wir<br/>den Beklagten · zur Replik ·<br/>zum Schriftsatz der Klägerseite"| SB
+  TX -->|"in Vollmacht des Klägers ·<br/>erheben wir … Klage · vertreten wir<br/>den Kläger · zur Klageerwiderung<br/>… Stellung"| SK
+  TX -->|"keine"| AS
+```
+
+**Lesehilfe:** Eine Festlegung des Gerichts hat immer Vorrang. Sonst prüft die Anwendung zuerst Titel und Dateinamen, und zwar zuerst auf Schriftsätze der beklagten Partei (damit „Klageerwiderung“ nicht als „Klage“ gelesen wird). Hilft das nicht weiter, werden gerichtliche Dokumente aussortiert und anschließend die ersten Zeilen des Textes nach typischen Formulierungen durchsucht; entscheidend ist, welche Formulierung **zuerst** vorkommt.
+
+### 9.3 Vortrag, Beweismittel und Art des Beweismittels
+
+```mermaid
+flowchart TD
+  classDef regel fill:#dbeafe,stroke:#2563eb,color:#0f172a
+  classDef ki fill:#ede9fe,stroke:#7c3aed,color:#0f172a
+  classDef hinweis fill:#fef3c7,stroke:#d97706,color:#0f172a
+
+  I["Äußerung in einem Dokument"]:::regel
+  RO{"Rolle des Dokuments<br/>siehe 9.2"}:::regel
+  VK["Vortrag der Klagepartei"]:::regel
+  VB["Vortrag der beklagten Partei"]:::regel
+  ANL{"Hat die Partei zu diesem Punkt<br/>bereits einen Schriftsatz?"}:::ki
+  BM["kein Vortrag, sondern Beweismittel<br/>der Partei, die es vorlegt oder<br/>sich darauf beruft"]:::ki
+  EA["eigene Äußerung der Partei in der<br/>Anlage, z. B. ihr Schreiben,<br/>darf als Vortrag dienen"]:::ki
+  SP["feste Zuordnung: Vortrag aus einem<br/>Schriftsatz steht immer bei der Partei,<br/>die ihn eingereicht hat"]:::regel
+  BA{"ausdrücklicher<br/>Beweisantritt?"}:::ki
+  KB["kein Beweisangebot"]:::hinweis
+  ART{"Art des<br/>Beweismittels"}:::ki
+  Z["Zeuge<br/>je benannter Person ein Eintrag"]:::ki
+  U["Urkunde"]:::ki
+  SV["Sachverständiger"]:::ki
+  AU["Augenschein"]:::ki
+  PV["Partei"]:::ki
+  PE{"Person zugleich<br/>als Zeuge benannt?"}:::ki
+  ZIEL["Verweis auf eine Anlage, z. B. „Anlage K1“:<br/>Klick öffnet die vorgelegte Anlage selbst"]:::regel
+
+  I --> RO
+  RO -->|"Schriftsatz Klagepartei"| VK
+  RO -->|"Schriftsatz beklagte Partei"| VB
+  RO -->|"Anlage / Sonstiges"| ANL
+  ANL -->|"ja"| BM
+  ANL -->|"nein"| EA
+  VK --> SP
+  VB --> SP
+  SP --> BA
+  BA -->|"nein"| KB
+  BA -->|"ja: Beweis: … · Zeugnis … ·<br/>Sachverständigengutachten"| ART
+  ART -->|"Zeugnis N. N. ·<br/>Zeugin / Zeuge N. N."| Z
+  ART -->|"Beweis: Anlage ·<br/>vorgelegte Urkunde"| U
+  ART -->|"Gutachten"| SV
+  ART -->|"Augenschein"| AU
+  ART -->|"Parteivernehmung"| PV
+  ART -->|"private schriftliche<br/>Erklärung einer Person"| PE
+  PE -->|"ja"| Z
+  PE -->|"nein"| U
+  U --> ZIEL
+```
+
+**Lesehilfe:** Parteivortrag kommt aus den Schriftsätzen; Anlagen sind grundsätzlich Beweismittel. Die einzige Ausnahme: Hat eine Partei zu einem Punkt noch keinen Schriftsatz, darf ihre eigene Äußerung in einer Anlage als Vortrag dienen. Als Beweisangebot zählt nur ein **ausdrücklicher Beweisantritt**. „Zeugnis N. N.“ ist immer Zeugenbeweis; die schriftliche Erklärung einer Person ist eine Urkunde, solange die Person nicht selbst als Zeuge benannt wird. Die violetten Schritte nimmt die KI nach diesen Vorgaben vor; die blauen setzt die Anwendung selbst durch.
+
+### 9.4 Status nach der ZPO
+
+```mermaid
+flowchart TD
+  classDef regel fill:#dbeafe,stroke:#2563eb,color:#0f172a
+  classDef ki fill:#ede9fe,stroke:#7c3aed,color:#0f172a
+  classDef gericht fill:#dcfce7,stroke:#16a34a,color:#0f172a
+  classDef hinweis fill:#fef3c7,stroke:#d97706,color:#0f172a
+
+  T0["Tatsache zu einem Merkmal"]:::regel
+  Q0{"Trägt eine Partei<br/>hierzu etwas vor?"}:::ki
+  NV["nicht vorgetragen"]:::ki
+  Q1{"Gibt es schon eine Klageerwiderung<br/>bzw. Einlassung der Gegenseite?"}:::ki
+  OF["offen"]:::ki
+  Q2{"Wie verhält sich die Gegenseite<br/>zu dieser Tatsache?"}:::ki
+  HH["Sonderhinweis Härtegründe:<br/>fehlendes fachärztliches Attest macht<br/>den Vortrag nicht unsubstantiiert"]:::hinweis
+  UN["unstreitig<br/>§ 288 ZPO"]:::ki
+  NB["nicht bestritten<br/>§ 138 Abs. 3 ZPO"]:::ki
+  BE["bestritten"]:::ki
+  NW["Nichtwissen<br/>§ 138 Abs. 4 ZPO"]:::ki
+  PA["pauschal bestritten<br/>Erheblichkeit prüfen"]:::ki
+  RF["Rechtsfrage"]:::ki
+  KORR{"Liegt in der Akte überhaupt ein<br/>Schriftsatz der beklagten Partei?"}:::regel
+  OF2["Status zwingend: offen<br/>kein Zugestehen, kein Nichtbestreiten"]:::regel
+  G{"Status vom Gericht<br/>korrigiert?"}:::gericht
+  WS["wirksamer Status"]:::regel
+  BB{"beweisbedürftig?"}:::regel
+  JA["ja: bestritten · Nichtwissen ·<br/>pauschal bestritten"]:::hinweis
+  NEIN["nein: unstreitig · nicht bestritten ·<br/>Rechtsfrage · offen · nicht vorgetragen"]:::regel
+
+  T0 --> Q0
+  Q0 -->|"nein"| NV
+  Q0 -->|"ja"| Q1
+  Q1 -->|"nein"| OF
+  Q1 -->|"ja"| Q2
+  HH -.- Q2
+  Q2 -->|"ausdrücklich zugestanden"| UN
+  Q2 -->|"lässt sich ein, äußert sich<br/>hierzu aber nicht"| NB
+  Q2 -->|"substantiiert bestritten"| BE
+  Q2 -->|"mit Nichtwissen bestritten"| NW
+  Q2 -->|"nur pauschal, z. B. bloße Rüge<br/>fehlender Beweismittel"| PA
+  Q2 -->|"Tatsachen unstreitig, nur die<br/>rechtliche Bewertung ist streitig"| RF
+  OF --> KORR
+  UN --> KORR
+  NB --> KORR
+  BE --> KORR
+  NW --> KORR
+  PA --> KORR
+  RF --> KORR
+  KORR -->|"nein"| OF2
+  KORR -->|"ja"| G
+  OF2 --> G
+  NV --> G
+  G -->|"ja: Status des Gerichts"| WS
+  G -->|"nein: Status wie oben"| WS
+  WS --> BB
+  BB --> JA
+  BB --> NEIN
+```
+
+**Lesehilfe:** Den Status schlägt die KI nach einer festen Entscheidungsfolge vor (violett). Danach greift eine feste Regel: Gibt es in der Akte keinen Schriftsatz der beklagten Partei, kann nichts zugestanden oder unbestritten sein – der Status wird dann zwingend „offen“. Zuletzt kann das Gericht den Status korrigieren; der so ermittelte **wirksame Status** entscheidet über die Beweisbedürftigkeit. „Pauschal bestritten“ gilt vorsorglich als beweisbedürftig – ob das Bestreiten nach § 138 Abs. 2 ZPO unbeachtlich ist, beurteilt das Gericht.
+
+### 9.5 Beweislast und Beweislücke
+
+```mermaid
+flowchart TD
+  classDef regel fill:#dbeafe,stroke:#2563eb,color:#0f172a
+  classDef gericht fill:#dcfce7,stroke:#16a34a,color:#0f172a
+  classDef hinweis fill:#fef3c7,stroke:#d97706,color:#0f172a
+
+  M["Merkmal mit wirksamem Status<br/>siehe 9.4"]:::regel
+  BB{"beweisbedürftig?"}:::regel
+  KB["kein Beweisthema –<br/>keine Beweislücke"]:::regel
+  RM{"Beweislast laut<br/>Regelmodell"}:::regel
+  KR["weiterer streitiger Punkt außerhalb<br/>des Regelmodells: keine Beweislast<br/>hinterlegt, keine Beweislücke"]:::hinweis
+  GS["gestuft – Sphärentheorie ⚑<br/>1. Vermieter: Ursache nicht in der Bausubstanz<br/>2. Mieter: Ursache nicht im Wohnverhalten<br/>keine automatische Beweislücke"]:::hinweis
+  MI{"Verfahrensart"}:::regel
+  VE{"Verfahrensart"}:::regel
+  KL["Kläger beweisbelastet"]:::regel
+  BK["Beklagter beweisbelastet"]:::regel
+  AK{"Hat der Kläger selbst<br/>Beweis angeboten?"}:::regel
+  AB{"Hat der Beklagte selbst<br/>Beweis angeboten?"}:::regel
+  OK["Beweisangebot vorhanden"]:::regel
+  GAP["⚠ Beweislücke<br/>Beweisangebote der Gegenseite<br/>schließen sie nicht"]:::hinweis
+  GER["rechtliche Würdigung durch das Gericht<br/>z. B. sekundäre Darlegungslast,<br/>Beweisaufnahme"]:::gericht
+
+  M --> BB
+  BB -->|"nein"| KB
+  BB -->|"ja"| RM
+  RM -->|"nicht hinterlegt"| KR
+  RM -->|"gestuft"| GS
+  RM -->|"Mieter"| MI
+  RM -->|"Vermieter"| VE
+  MI -->|"Minderung: Mieter = Kläger"| KL
+  MI -->|"Räumung: Mieter = Beklagter"| BK
+  VE -->|"Räumung: Vermieter = Kläger"| KL
+  VE -->|"Minderung: Vermieter = Beklagter"| BK
+  KL --> AK
+  BK --> AB
+  AK -->|"ja"| OK
+  AK -->|"nein"| GAP
+  AB -->|"ja"| OK
+  AB -->|"nein"| GAP
+  OK --> GER
+  GAP --> GER
+  GS --> GER
+  KR --> GER
+```
+
+**Lesehilfe:** Das Regelmodell nennt die Beweislast in materiell-rechtlichen Rollen (Mieter oder Vermieter). Die Anwendung übersetzt sie anhand der Verfahrensart in die Prozessrolle: Bei der Mietminderung klagt der Mieter, bei der Räumung der Vermieter. Eine Beweislücke wird nur angezeigt, wenn der Punkt beweisbedürftig ist und **gerade die beweisbelastete Partei** keinen Beweis angeboten hat. Bei gestufter Beweislast und bei Punkten außerhalb des Regelmodells unterbleibt der Hinweis. Die Beweislücke ist ein Prüfhinweis und ersetzt keine rechtliche Würdigung.
+
+### 9.6 Prüfungsaufbau: Mietminderung, Rückzahlung, Mängelbeseitigung
+
+> **Hinweis zu 9.6 und 9.7:** Diese Diagramme geben die **Gliederung des Regelmodells** wieder, einschließlich der Obersätze und Hinweise aus dem Prüfungsschema (Abschnitt 6). Die Rauten sind **Prüfungsfragen, die das Gericht beantwortet**. Die Anwendung verknüpft die Ergebnisse einzelner Merkmale nicht und zieht aus ihnen keine Schlüsse; das Gericht hält sein Ergebnis je Prüfschritt als „erfüllt“, „nicht erfüllt“ oder „offen“ fest. Mit ⚑ markierte Elemente sind vom Team juristisch zu verifizieren.
+
+**a) Welche Merkmale gehören zu welchem Klageantrag?** ⚑ Zuordnung vom Team zu verifizieren
+
+```mermaid
+flowchart TD
+  classDef regel fill:#dbeafe,stroke:#2563eb,color:#0f172a
+  classDef ki fill:#ede9fe,stroke:#7c3aed,color:#0f172a
+  classDef hinweis fill:#fef3c7,stroke:#d97706,color:#0f172a
+
+  BASIS["für jeden Antrag zu prüfen:<br/>Mietvertrag und Miethöhe ·<br/>Mangel und Ursache je Mangel"]:::regel
+  G4["zusätzlich: Schadensersatz · Selbstvornahme<br/>optionale Gruppe G4"]:::regel
+  VE["zusätzlich: Vereitelung der<br/>Mangelbeseitigung"]:::regel
+  BS["zusätzlich: Anspruch auf<br/>Mangelbeseitigung"]:::regel
+  MI["zusätzlich: Erheblichkeit · Mängelanzeige ·<br/>Zeitraum und Höhe der Minderung"]:::regel
+  ZA["zusätzlich: Zahlung · Vorbehalt § 814 BGB"]:::regel
+
+  A4["Antrag: Schadens- oder<br/>Aufwendungsersatz<br/>§ 536a BGB"]:::ki
+  A1["Antrag: Mängelbeseitigung<br/>§ 535 Abs. 1 S. 2 BGB"]:::ki
+  A3["Antrag: Feststellung<br/>der Minderung<br/>§ 536 Abs. 1 BGB, § 256 ZPO"]:::ki
+  A2["Antrag: Rückzahlung<br/>§ 812 Abs. 1 S. 1 Alt. 1<br/>i. V. m. § 536 Abs. 1 BGB"]:::ki
+
+  FK["Fristlose Kündigung § 543 BGB<br/>optionale Gruppe G4 – keinem Antrag<br/>zugeordnet, erscheint unter<br/>„Weitere Merkmale“"]:::hinweis
+
+  BASIS --> G4 --> A4
+  BASIS --> VE
+  VE --> BS --> A1
+  VE --> MI
+  MI --> A3
+  MI --> ZA --> A2
+```
+
+**Lesehilfe:** Das Diagramm liest sich von oben nach unten: Jeder Antrag umfasst alle Merkmale auf dem Weg von „für jeden Antrag zu prüfen“ bis zu ihm. Der **Rückzahlungsantrag** etwa umfasst Mietvertrag, Mangel und Ursache, Vereitelung, Erheblichkeit, Anzeige, Zeitraum und Höhe sowie Zahlung und Vorbehalt. Die KI erkennt die gestellten Anträge (violett) und ordnet sie einem Antragstyp zu; welche Merkmale zu dem Typ gehören, legt das Regelmodell fest (blau). Ein Merkmal, das mehrere Anträge betrifft, wird in der Übersicht mit „auch Antrag …“ gekennzeichnet und im Begründungsgerüst nur einmal ausgeführt.
+
+**b) Prüfungsablauf der Minderung**
+
+```mermaid
+flowchart TD
+  classDef regel fill:#dbeafe,stroke:#2563eb,color:#0f172a
+  classDef gericht fill:#dcfce7,stroke:#16a34a,color:#0f172a
+  classDef hinweis fill:#fef3c7,stroke:#d97706,color:#0f172a
+  classDef aus fill:#fee2e2,stroke:#dc2626,color:#0f172a
+
+  MV["Mietvertrag über Wohnraum, Miethöhe<br/>§ 535 BGB · BL Mieter"]:::regel
+
+  subgraph JM["je gerügtem Mangel"]
+    MA["Mangel der Mietsache · § 536 Abs. 1 S. 1 BGB<br/>geschuldeter Zustand ↔ tatsächlicher Zustand<br/>BL Mieter"]:::regel
+    Q1{"Gebrauchstauglichkeit<br/>aufgehoben oder gemindert?"}:::gericht
+    UR["Ursache / Verantwortungsbereich<br/>Sphärentheorie ⚑ · BL gestuft"]:::regel
+    Q2{"Ursache im Bereich<br/>des Vermieters?"}:::gericht
+    ER["Erheblichkeit · § 536 Abs. 1 S. 3 BGB<br/>Einwendung · BL Vermieter"]:::regel
+    Q3{"Beeinträchtigung<br/>nur unerheblich?"}:::gericht
+    AZ["Mängelanzeige · § 536c BGB ⚑<br/>Einwendung · BL Vermieter"]:::regel
+    Q4{"Anzeige unterlassen, und konnte<br/>der Vermieter deshalb nicht abhelfen?"}:::gericht
+  end
+
+  ZR["Zeitraum und Höhe<br/>§ 536 Abs. 1 S. 2 BGB · Schätzung § 287 ZPO<br/>Minderung kraft Gesetzes · BL Mieter"]:::regel
+  ZH["Bemessung: h. M. Bruttomiete,<br/>a. M. Nettomiete · bei massiven<br/>Mängeln bis zur vollen Befreiung"]:::hinweis
+  VE["Vereitelung der Mangelbeseitigung<br/>§ 242 BGB · Einwendung · BL Vermieter"]:::regel
+  Q5{"zumutbare Besichtigungs- oder<br/>Reparaturtermine verweigert?"}:::gericht
+  RES["Minderung für diesen Mangel<br/>und Zeitraum"]:::gericht
+
+  N1["kein Mangel"]:::aus
+  N2["insoweit keine Minderung"]:::aus
+  N3["Minderung ausgeschlossen"]:::aus
+  N4["insoweit Verlust der Rechte<br/>§ 536c Abs. 2 BGB"]:::aus
+  N5["Berufung auf die Minderung<br/>insoweit treuwidrig"]:::aus
+
+  MV --> MA --> Q1
+  Q1 -->|"nein"| N1
+  Q1 -->|"ja"| UR --> Q2
+  Q2 -->|"nein: Wohn- oder<br/>Lüftungsverhalten"| N2
+  Q2 -->|"ja: z. B. Bausubstanz"| ER --> Q3
+  Q3 -->|"ja"| N3
+  Q3 -->|"nein"| AZ --> Q4
+  Q4 -->|"ja"| N4
+  Q4 -->|"nein"| ZR
+  ZH -.- ZR
+  ZR --> VE --> Q5
+  Q5 -->|"ja"| N5
+  Q5 -->|"nein"| RES
+  style JM fill:none,stroke:#94a3b8,stroke-dasharray:5 4
+```
+
+**Lesehilfe:** Die Prüfung beginnt mit dem Mietvertrag. Für **jeden gerügten Mangel** (z. B. „Schimmel Schlafzimmer“, „Lärm Nachbarwohnung“) werden Mangel, Ursache, Erheblichkeit und Anzeige gesondert erfasst. Anspruchsbegründende Tatsachen hat der Mieter zu beweisen, Einwendungen (Unerheblichkeit, unterlassene Anzeige, Vereitelung) der Vermieter; bei der Ursache gilt die gestufte Beweislast der Sphärentheorie. Die Minderung tritt kraft Gesetzes ein, eine Minderungserklärung ist nicht erforderlich. Stört ein Mitmieter, weist das Prüfungsschema darauf hin, dass gegen ihn nur §§ 823, 1004, 858 ff. BGB in Betracht kämen; das Verhältnis zum Vermieter bleibt unberührt.
+
+**c) Die einzelnen Klageanträge**
+
+```mermaid
+flowchart TD
+  classDef regel fill:#dbeafe,stroke:#2563eb,color:#0f172a
+  classDef gericht fill:#dcfce7,stroke:#16a34a,color:#0f172a
+  classDef hinweis fill:#fef3c7,stroke:#d97706,color:#0f172a
+  classDef aus fill:#fee2e2,stroke:#dc2626,color:#0f172a
+
+  MIN["Ergebnis der Minderungsprüfung<br/>siehe b"]:::gericht
+  MU["Mangel und Ursache<br/>siehe b"]:::gericht
+
+  subgraph RZ["Rückzahlung"]
+    Z1["Zahlung der ungeminderten Miete<br/>welche Beträge für welche Monate<br/>BL Mieter"]:::regel
+    Z2["Leistung ohne Rechtsgrund, soweit<br/>die Miete kraft Gesetzes gemindert war"]:::regel
+    ZS["Streitstand Anspruchsgrundlage:<br/>h. M. § 812 Abs. 1 S. 1 Alt. 1 BGB<br/>a. M. unmittelbar § 536 Abs. 1 S. 1 BGB"]:::hinweis
+    Z3{"in Kenntnis der Nichtschuld gezahlt?<br/>§ 814 BGB ⚑ · Einwendung · BL Vermieter<br/>Zahlungsvorbehalt spricht dagegen"}:::gericht
+    ZJ["Rückzahlung der Überzahlung"]:::gericht
+    ZN["Rückforderung ausgeschlossen"]:::aus
+    Z1 --> Z2 --> Z3
+    ZS -.- Z2
+    Z3 -->|"nein"| ZJ
+    Z3 -->|"ja"| ZN
+  end
+
+  subgraph FS["Feststellung"]
+    F1["Feststellung von Quote<br/>und Zeitraum · § 256 ZPO"]:::gericht
+  end
+
+  subgraph MB["Mängelbeseitigung"]
+    B1["Mangel besteht fort · § 535 Abs. 1 S. 2 BGB<br/>ursprünglicher Erfüllungsanspruch<br/>BL Mieter"]:::regel
+    BV["dem Antrag ebenfalls zugeordnet:<br/>Vereitelung der Mangelbeseitigung<br/>§ 242 BGB · BL Vermieter"]:::hinweis
+    B2{"Opfergrenze überschritten?<br/>§§ 275 Abs. 2, 313 BGB"}:::gericht
+    B3["Beseitigung geschuldet"]:::gericht
+    BN["Anspruch endet"]:::aus
+    B4["daneben: Zurückbehaltungsrecht an der Miete<br/>§ 320 BGB ⚑ · h. M. etwa das Dreifache der<br/>Beseitigungskosten · nicht bei Geringfügigkeit"]:::hinweis
+    B1 --> B2
+    BV -.- B1
+    B2 -->|"ja"| BN
+    B2 -->|"nein"| B3
+    B3 -.- B4
+  end
+
+  MIN --> Z2
+  MIN --> F1
+  MU --> B1
+  style RZ fill:none,stroke:#94a3b8
+  style FS fill:none,stroke:#94a3b8
+  style MB fill:none,stroke:#94a3b8
+```
+
+**Lesehilfe:** Der **Rückzahlungsantrag** setzt die Minderung (b) voraus und fügt die Zahlung sowie die Einwendung des § 814 BGB hinzu; zur Anspruchsgrundlage ist ein Streitstand hinterlegt. Der **Feststellungsantrag** stützt sich allein auf das Ergebnis der Minderungsprüfung. Der **Beseitigungsantrag** braucht Mangel und Ursache, nicht aber Erheblichkeit, Anzeige oder Minderungsquote; er endet an der Opfergrenze. Das Regelmodell ordnet ihm zusätzlich das Merkmal „Vereitelung der Mangelbeseitigung“ zu; welche Folge eine Vereitelung für den Beseitigungsanspruch hat, legt das Prüfungsschema nicht fest. Das Zurückbehaltungsrecht ist als Hinweis hinterlegt.
+
+**d) Optionale Gruppe G4: Weitere Anspruchsgrundlagen** – wird nur analysiert, wenn das Gericht die Gruppe für die Akte einschaltet; alle Merkmale ⚑, BL jeweils Mieter
+
+```mermaid
+flowchart LR
+  classDef regel fill:#dbeafe,stroke:#2563eb,color:#0f172a
+  classDef gericht fill:#dcfce7,stroke:#16a34a,color:#0f172a
+  classDef hinweis fill:#fef3c7,stroke:#d97706,color:#0f172a
+  classDef aus fill:#fee2e2,stroke:#dc2626,color:#0f172a
+
+  subgraph FK["Fristlose Kündigung"]
+    direction TB
+    K1["Fristlose Kündigung durch den Mieter<br/>§ 543 Abs. 2 S. 1 Nr. 1, Abs. 3 BGB<br/>Nichtgewährung des vertragsgemäßen<br/>Gebrauchs wegen eines Mangels"]:::regel
+    K2{"Abhilfeverlangen mit angemessener<br/>Frist – oder entbehrlich?"}:::gericht
+    K3["schriftliche Kündigungserklärung"]:::regel
+    KN["Kündigung unwirksam"]:::aus
+    K1 --> K2
+    K2 -->|"ja"| K3
+    K2 -->|"nein"| KN
+  end
+
+  subgraph AE["Aufwendungsersatz"]
+    direction TB
+    E0["Aufwendungsersatz nach<br/>Selbstvornahme · § 536a Abs. 2 BGB"]:::regel
+    E1{"Verzug des Vermieters mit der<br/>Beseitigung oder Notmaßnahme?"}:::gericht
+    E2["Erforderlichkeit und Höhe<br/>der Aufwendungen"]:::regel
+    E3["nur eng über §§ 539 Abs. 1,<br/>683, 670 BGB"]:::hinweis
+    E0 --> E1
+    E1 -->|"ja"| E2
+    E1 -->|"nein"| E3
+  end
+
+  subgraph SE["Schadensersatz"]
+    direction TB
+    S0["Schadensersatz wegen Mangels<br/>§ 536a Abs. 1 BGB<br/>Mangel im Sinne des § 536 BGB"]:::regel
+    S1{"Welche Variante?"}:::gericht
+    V1["Mangel schon bei Vertragsschluss<br/>Garantiehaftung, ohne Verschulden"]:::regel
+    V2["später entstanden und vom<br/>Vermieter zu vertreten"]:::regel
+    V3["Verzug des Vermieters<br/>mit der Beseitigung"]:::regel
+    S2["Schaden und<br/>Ursachenzusammenhang"]:::regel
+    S0 --> S1
+    S1 --> V1 & V2 & V3
+    V1 & V2 & V3 --> S2
+  end
+
+  KON["Konkurrenzen: Nach Überlassung dürften die §§ 536 ff. BGB<br/>das allgemeine Leistungsstörungsrecht verdrängen –<br/>Ausnahmen: Arglist; Untergang der Mietsache durch<br/>Verschulden des Mieters, § 326 Abs. 2 BGB"]:::hinweis
+
+  style SE fill:none,stroke:#94a3b8
+  style AE fill:none,stroke:#94a3b8
+  style FK fill:none,stroke:#94a3b8
+```
+
+**Lesehilfe:** Die Gruppe enthält drei weitere Anspruchsgrundlagen. Schadensersatz kennt drei Varianten, von denen nur der anfängliche Mangel verschuldensunabhängig ist (Garantiehaftung). Aufwendungsersatz setzt grundsätzlich Verzug des Vermieters voraus. Die fristlose Kündigung ist keinem Antragstyp zugeordnet und erscheint in der Übersicht unter „Weitere Merkmale“.
+
+### 9.7 Prüfungsaufbau: Räumung nach Eigenbedarfskündigung
+
+```mermaid
+flowchart TD
+  classDef regel fill:#dbeafe,stroke:#2563eb,color:#0f172a
+  classDef gericht fill:#dcfce7,stroke:#16a34a,color:#0f172a
+  classDef hinweis fill:#fef3c7,stroke:#d97706,color:#0f172a
+  classDef aus fill:#fee2e2,stroke:#dc2626,color:#0f172a
+
+  AN["Antrag: Räumung und Herausgabe<br/>§§ 546 Abs. 1, 985 BGB"]:::regel
+
+  subgraph G1["G1 Wirksame Kündigung"]
+    K1["Mietverhältnis und Überlassung<br/>§§ 535, 546 Abs. 1 BGB<br/>BL Vermieter für G1"]:::regel
+    K2["Schriftform, eigenhändige Unterschrift<br/>§§ 568 Abs. 1, 126 BGB<br/>mehrere Beteiligte: von allen, an alle ⚑"]:::regel
+    K3["Zugang · § 130 BGB ⚑"]:::regel
+    K4["Gründe im Kündigungsschreiben<br/>§ 573 Abs. 3 BGB ⚑"]:::regel
+    K5["Kündigungsfrist · § 573c Abs. 1 BGB ⚑<br/>zu früher Termin wirkt<br/>zum nächstzulässigen"]:::regel
+    KB["befristetes Mietverhältnis · § 575 BGB ⚑<br/>berechtigtes Interesse an der Beendigung,<br/>sonst Fortsetzungsverlangen des Mieters"]:::hinweis
+    K1 --> K2 --> K3 --> K4 --> K5
+    K5 -->|"nur wenn die Akte eine<br/>Befristung erwähnt"| KB
+  end
+  QK{"Kündigung<br/>wirksam?"}:::gericht
+
+  subgraph G2["G2 Eigenbedarf"]
+    E1["Bedarfsperson · § 573 Abs. 2 Nr. 2 BGB<br/>Vermieter, Familien- oder<br/>Haushaltsangehörige · BL Vermieter"]:::regel
+    E2["ernsthafter, konkreter Nutzungswille<br/>keine bloße Vorratskündigung · BL Vermieter"]:::regel
+    E3["vernünftige, nachvollziehbare Gründe<br/>Lebensplanung nicht durch eigene<br/>Vorstellungen ersetzen · BL Vermieter"]:::regel
+    E4["Alternativwohnung / Anbietpflicht<br/>§ 242 BGB ⚑ · BL Mieter<br/>sekundäre Darlegungslast Vermieter"]:::regel
+    E5["Sperrfrist nach Umwandlung<br/>§ 577a BGB · BL Mieter"]:::regel
+    E1 --> E2 --> E3 --> E4 --> E5
+  end
+  GG["Art. 14 GG schützt beide Seiten:<br/>Eigentum des Vermieters und<br/>Besitzrecht des Mieters"]:::hinweis
+  QE{"Eigenbedarf begründet und Kündigung<br/>nicht ausgeschlossen – Rechtsmissbrauch ⚑,<br/>Sperrfrist?"}:::gericht
+
+  subgraph G3["G3 Widerspruch und Härte"]
+    H1["Widerspruch: Schriftform und Frist<br/>§ 574b BGB · Belehrung § 568 Abs. 2 BGB ⚑<br/>BL Mieter für G3"]:::regel
+    QW{"Widerspruch<br/>wirksam?"}:::gericht
+    H2["Härtegründe · § 574 Abs. 1 BGB<br/>Alter, Gesundheit, Verwurzelung, Mietdauer<br/>fachärztliches Attest nicht zwingend"]:::regel
+    H3["kein zumutbarer Ersatzwohnraum<br/>§ 574 Abs. 2 BGB ⚑<br/>Suchbemühungen, Marktlage"]:::regel
+    H4{"Abwägung: Härte für den Mieter<br/>gegen Erlangungsinteresse<br/>des Vermieters"}:::gericht
+    H1 --> QW
+    QW -->|"ja"| H2 & H3
+    H2 & H3 --> H4
+  end
+
+  X1["Räumungsanspruch<br/>nicht begründet"]:::aus
+  R["Räumung und Herausgabe"]:::gericht
+  F["Fortsetzung des Mietverhältnisses<br/>§ 574 BGB"]:::aus
+
+  AN --> K1
+  K5 --> QK
+  KB --> QK
+  QK -->|"nein"| X1
+  QK -->|"ja"| E1
+  GG -.- E3
+  E5 --> QE
+  QE -->|"nein"| X1
+  QE -->|"ja"| H1
+  QW -->|"nein"| R
+  H4 -->|"Härte nicht zu rechtfertigen"| F
+  H4 -->|"Interesse des Vermieters<br/>überwiegt"| R
+  style G1 fill:none,stroke:#94a3b8
+  style G2 fill:none,stroke:#94a3b8
+  style G3 fill:none,stroke:#94a3b8
+```
+
+**Lesehilfe:** Die Prüfung folgt dem klassischen Aufbau: zuerst die **Wirksamkeit der Kündigung** (Form, Zugang, Begründung, Frist), dann der **Kündigungsgrund Eigenbedarf** mit den Gegenrechten des Mieters (Anbietpflicht, Sperrfrist), schließlich **Widerspruch und Härte** nach der Sozialklausel. Die Beweislast liegt für die Kündigung und den Eigenbedarf beim Vermieter, für Gegenrechte, Widerspruch und Härte beim Mieter. Das Merkmal „Befristetes Mietverhältnis“ wird nur geprüft, wenn die Akte eine Befristung erwähnt.
+
+> **⚑ Hinweis für die juristische Prüfung des Regelmodells:** Das Regelmodell ordnet die Verletzung der Anbietpflicht als Rechtsmissbrauch (§ 242 BGB) ein, der die Kündigung ausschließen könnte. Nach der Rechtsprechung des BGH (Urt. v. 14.12.2016 – VIII ZR 232/15) führt ein Verstoß gegen die Anbietpflicht jedoch nicht zur Unwirksamkeit der Eigenbedarfskündigung, sondern kann lediglich Schadensersatzansprüche des Mieters begründen. Diese Einordnung sollte bei der Verifikation des Regelmodells überprüft werden.
+
+### 9.8 Belegprinzip bei der Rechtsprechung
+
+```mermaid
+flowchart TD
+  classDef regel fill:#dbeafe,stroke:#2563eb,color:#0f172a
+  classDef ki fill:#ede9fe,stroke:#7c3aed,color:#0f172a
+  classDef gericht fill:#dcfce7,stroke:#16a34a,color:#0f172a
+  classDef hinweis fill:#fef3c7,stroke:#d97706,color:#0f172a
+  classDef aus fill:#fee2e2,stroke:#dc2626,color:#0f172a
+
+  Q1["Suchbegriffe aus dem Regelmodell<br/>je Merkmal und Prüfschritt"]:::regel
+  Q2["konkreter Mangel der Akte,<br/>z. B. „Schimmel“"]:::regel
+  Q3["auf Wunsch: Vorschlag der KI –<br/>nur Suchbegriffe, keine Urteile"]:::ki
+  DB["amtliche Rechtsprechungsdatenbank<br/>des Bundes · NeuRIS"]:::regel
+  W{"weniger als<br/>3 Treffer?"}:::regel
+  ER["erweiterte Suche – Treffer mit Hinweis<br/>„Einschlägigkeit bitte prüfen“"]:::hinweis
+  L["Trefferliste: ausschließlich<br/>tatsächlich gefundene Entscheidungen"]:::regel
+  AZ["im Skript genanntes Aktenzeichen,<br/>z. B. VIII ZR 270/22"]:::regel
+  AZQ{"Aktenzeichen exakt in<br/>der Datenbank gefunden?"}:::regel
+  AZJ["angezeigt mit Vermerk<br/>„im Skript zitiert“"]:::regel
+  AZN["nicht als Beleg angezeigt"]:::aus
+  G["Gericht liest den Volltext und<br/>prüft die Einschlägigkeit"]:::gericht
+  P["an Merkmal oder Prüfschritt anheften"]:::gericht
+  BG["Zitat im Begründungsgerüst"]:::regel
+
+  Q1 --> DB
+  Q2 --> DB
+  Q3 --> DB
+  DB --> W
+  W -->|"ja"| ER --> L
+  W -->|"nein"| L
+  AZ --> AZQ
+  AZQ -->|"ja"| AZJ --> L
+  AZQ -->|"nein"| AZN
+  L --> G --> P --> BG
+```
+
+**Lesehilfe:** Die KI kann allenfalls Suchbegriffe beisteuern; jede angezeigte Entscheidung stammt aus der amtlichen Datenbank. Im Skript genannte Aktenzeichen werden nur übernommen, wenn die Datenbank genau dieses Aktenzeichen liefert. In das Begründungsgerüst gelangen nur Entscheidungen, die das Gericht selbst geprüft und angeheftet hat.
+
+<details>
+<summary>🔧 Exkurs für Informatiker: Pflege der Diagramme</summary>
+
+Die Diagramme sind in [Mermaid](https://mermaid.js.org/) geschrieben und stehen als Quelltext direkt in dieser Datei; GitHub stellt sie beim Anzeigen als Grafik dar. Sie bilden das Regelmodell (`RULES`, `PRUEFUNG`, `ANTRAEGE`) und die Logik von `runAnalysis()`, `verifyItem()`, `docSideAuto()`, `effStatus()`, `sideOf()` und `proofGap()` ab und müssen bei Änderungen dort von Hand nachgezogen werden. Hinweise zur Syntax: Ein Knotentext, der mit „+ “, „- “ oder „1. “ beginnt, wird als Markdown-Liste gedeutet und nicht dargestellt; lange Gruppentitel (`subgraph`) werden abgeschnitten, deshalb stehen Normen und Beweislast in den Knoten.
+</details>
+
+---
+
+## 10. Datenschutz, Vertraulichkeit, Speicherort
 
 > **Wichtig:** Die Anwendung sendet den **vollständigen Text der Akte** an einen externen KI-Anbieter (Claude von Anthropic oder – je nach Einstellung – über OpenRouter an Anthropic, OpenAI oder Google). Die Anwendung weist selbst darauf hin, dass sie **nur für synthetische Übungsakten** bestimmt ist. Für echte Verfahrensakten wären vor einem Einsatz insbesondere datenschutzrechtliche Fragen (DSGVO, bereichsspezifisches Justizdatenschutzrecht), die Wahrung des Beratungs- und Dienstgeheimnisses sowie die Vorgaben der Justizverwaltung zum Einsatz externer KI-Dienste zu klären.
 
@@ -526,7 +1165,7 @@ Für die Darstellung lädt die Anwendung außerdem Schriftarten (Google Fonts) s
 
 ---
 
-## 10. Grenzen und Fehlerquellen
+## 11. Grenzen und Fehlerquellen
 
 Die folgenden Punkte sollten beim Arbeiten mit der Anwendung stets bedacht werden:
 
@@ -543,7 +1182,7 @@ Die folgenden Punkte sollten beim Arbeiten mit der Anwendung stets bedacht werde
 
 ---
 
-## 11. Technischer Anhang (Exkurs für Informatiker)
+## 12. Technischer Anhang (Exkurs für Informatiker)
 
 <details>
 <summary>🔧 Aufbau, Abhängigkeiten, Betrieb und Testschnittstelle</summary>
@@ -609,7 +1248,7 @@ Die Anwendung greift optional auf Dateien neben der HTML-Seite zu, die in diesem
 
 ---
 
-## 12. Glossar
+## 13. Glossar
 
 | Begriff | Bedeutung in der Anwendung |
 |---|---|
