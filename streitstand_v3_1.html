@@ -153,6 +153,27 @@
   table.st td.fold .court { margin-left: 10px; }
   .fold-bar { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; color: var(--muted); }
   .fold-bar .note-btn { white-space: nowrap; }
+  /* Minderungsschätzung je Mangel */
+  .min-mini { margin-top: 6px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+  .min-chip { display: inline-block; border: 0; border-radius: 999px; padding: 2px 9px; font-size: 11.5px; font-weight: 600; line-height: 1.5; cursor: pointer; background: var(--gray-bg); color: var(--muted); }
+  span.min-chip { cursor: default; }
+  .min-chip span { font-weight: 500; opacity: .85; }
+  .min-chip.p-hoch { background: var(--green-bg); color: var(--green); }
+  .min-chip.p-mittel { background: var(--amber-bg); color: var(--amber); }
+  .min-box { margin: 4px 0 14px; padding: 10px 12px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--raise); font-size: 13px; }
+  .min-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+  .min-val { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 12px; }
+  .min-big { font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+  .min-range { color: var(--muted); font-weight: 500; }
+  .min-bar { position: relative; height: 6px; margin: 8px 0 10px; border-radius: 3px; background: var(--well); }
+  .min-bar i { position: absolute; top: 0; bottom: 0; border-radius: 3px; background: var(--accent-line); }
+  .min-bar b { position: absolute; top: -3px; width: 3px; height: 12px; margin-left: -1px; border-radius: 2px; background: var(--accent); }
+  .min-list { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 4px; }
+  .min-list li { display: flex; align-items: center; gap: 6px; }
+  .min-list li a { flex: none; font-size: 12px; text-decoration: none; color: var(--law); }
+  .min-busy { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+  .min-err { margin-top: 6px; font-size: 12px; color: var(--red); }
+  .min-note { margin-top: 8px; font-size: 11.5px; color: var(--faint); }
   .item { margin-bottom: 6px; }
   .item:last-child { margin-bottom: 0; }
   .say { display: block; width: 100%; text-align: left; border: 1px solid transparent; background: transparent; padding: 5px 8px; margin: -5px -8px; border-radius: 8px; line-height: 1.45; transition: background .12s; }
@@ -925,6 +946,7 @@ const S = {
   busy: null, error: null, preview: null, newForm: null, pendingFolder: null, openNotes: new Set(),
   pruefRsp: {}, // Prüfung: Suchergebnisse je „key#Schritt“
   openAntrag: new Set(), openRow: new Set(), antragFor: null, viewTable: false, // Übersicht: aufgeklappte Anträge/Merkmale, Gesamttabelle
+  minBusy: new Set(), minErr: new Map(), // Minderungsschätzung je Mangel-Zeile
   fold: new Map(), foldFor: null // Gesamttabelle: vom Nutzer ein-/ausgeklappte Merkmale (key -> true = eingeklappt)
 };
 const memFiles = new Map(); // aktenId -> [{path, file}] (Fallback ohne Ordner-Handle)
@@ -1732,6 +1754,134 @@ function cleanHtml(html) {
 }
 const risDocUrl = nr => `${risBase()}${risPath || RIS_PATHS[0]}/${encodeURIComponent(nr)}.html`;
 function rowByKey(key) { return key && S.current.analysis ? (S.current.analysis.rows.find(r => r.key === key) || virtualRows(S.current).find(r => r.key === key) || null) : null; }
+
+/* ========================= Minderungsquote je Mangel – Schätzung aus der Rechtsprechungsdatenbank =========================
+   Quoten werden deterministisch aus den Volltexten gezogen; die KI wählt nur vergleichbare Fundstellen aus.
+   Jede genannte Quote muss wörtlich in der Fundstelle stehen. Spanne und Präzision berechnet der Code. */
+const isMangelRow = (a, r) => a.verfahren === 'minderung' && r.merkmal === 'MANGEL' && !r.virtual;
+const PCT_RE = /(\d{1,3}(?:,\d+)?)\s*(?:%|Prozent|v\.\s?H\.)/g;
+const pctsIn = s => [...String(s || '').matchAll(PCT_RE)].map(m => parseFloat(m[1].replace(',', '.'))).filter(v => v > 0 && v <= 100);
+function quotePassages(text) {
+  const t = String(text || '').replace(/\s+/g, ' '), out = [];
+  let lastEnd = -1;
+  for (const m of t.matchAll(PCT_RE)) {
+    const v = parseFloat(m[1].replace(',', '.')); if (!(v > 0 && v <= 100)) continue;
+    let a = Math.max(0, m.index - 250), b = Math.min(t.length, m.index + m[0].length + 250);
+    if (!/minder|quote/i.test(t.slice(a, b))) continue;
+    if (a < lastEnd) continue; // überlappende Fundstellen nur einmal
+    a = t.lastIndexOf(' ', a) + 1; const e = t.indexOf(' ', b); b = e < 0 ? t.length : e;
+    out.push(t.slice(a, b).trim()); lastEnd = b;
+    if (out.length >= 6) break;
+  }
+  return out;
+}
+// Suchwort für den Mangel – auch kurze Fachwörter wie „Lärm“, die mangelWort() (ab 5 Buchstaben) nicht erfasst
+// Reihenfolge = Vorrang (spezifischer zuerst, z. B. „Schimmel“ vor „Feuchtigkeit“)
+const MANGEL_WORTE = ['Schimmel', 'Wasserschaden', 'Feuchtigkeit', 'Nässe', 'Lärm', 'Geräusch', 'Warmwasser', 'Heizung', 'Kälte', 'Aufzug', 'Ungeziefer', 'Schädlinge', 'Zugluft', 'Baustelle', 'Balkon', 'Fenster', 'Geruch'];
+function mangelBegriff(r) {
+  for (const src of [r.instanz, [...r.klaeger, ...r.beklagter].map(i => i.kurz).join(' ')]) {
+    const w = MANGEL_WORTE.find(x => String(src || '').toLowerCase().includes(x.toLowerCase())); if (w) return w;
+  }
+  return mangelWort(r) || keywords(r.label)[0] || 'Mangel';
+}
+const htmlText = html => new DOMParser().parseFromString(html, 'text/html').body.textContent || '';
+// Gewichtetes Quantil (Gewicht = Vergleichbarkeit 1–3)
+function wQuant(xs, q) {
+  const v = [...xs].sort((x, y) => x.v - y.v), tot = v.reduce((n, x) => n + x.w, 0);
+  let acc = 0; for (const x of v) { acc += x.w; if (acc >= q * tot - 1e-9) return x.v; }
+  return v[v.length - 1].v;
+}
+const r5 = x => Math.round(x / 5) * 5, clampPct = x => Math.max(0, Math.min(100, x));
+function minderungSpanne(xs, ki) {
+  const n = xs.length; if (!n) return null;
+  const vals = xs.map(x => x.v), lo = Math.min(...vals), hi = Math.max(...vals);
+  let von, bis, praezision;
+  if (n === 1) { von = vals[0] - 10; bis = vals[0] + 10; praezision = 'gering'; }
+  else if (n <= 3) { von = lo - 5; bis = hi + 5; praezision = hi - lo > 20 ? 'gering' : 'mittel'; }
+  else { von = wQuant(xs, 0.25); bis = wQuant(xs, 0.75); praezision = bis - von <= 10 ? 'hoch' : 'mittel'; }
+  von = clampPct(Math.floor(von)); bis = clampPct(Math.ceil(bis));
+  let punkt = clampPct(r5(wQuant(xs, 0.5)));
+  if (typeof ki === 'number' && ki >= von && ki <= bis) punkt = Math.round(ki);
+  von = Math.min(von, punkt); bis = Math.max(bis, punkt);
+  return { punkt, von, bis, praezision, n };
+}
+async function estimateMinderung(a, r, fresh) {
+  const w = mangelBegriff(r);
+  const queries = [w + ' Mietminderung', w + ' Minderungsquote', w + ' Minderung Prozent'];
+  const res = await risMulti(queries, '', fresh);
+  const hits = res.hits.slice(0, 8);
+  // Volltexte laden (wie im Seitenpanel), Quoten-Fundstellen herausziehen
+  const docs = (await pool(hits.map(h => async () => {
+    try {
+      if (!risHtmlCache.has(h.nr)) risHtmlCache.set(h.nr, cleanHtml(await risTry(path => risFetch(`${path}/${encodeURIComponent(h.nr)}.html`, null, true))));
+      return { h, passages: quotePassages(htmlText(risHtmlCache.get(h.nr))) };
+    } catch { return { h, passages: [] }; }
+  }), 4)).filter(d => d.passages.length);
+  const fund = []; docs.forEach(d => d.passages.forEach(t => fund.push({ id: 'E' + (fund.length + 1), h: d.h, text: t })));
+  const out = { queries, at: new Date().toISOString(), gesichtet: hits.length, urteile: [], punkt: null, von: null, bis: null, praezision: null, n: 0 };
+  if (fund.length) {
+    const vortrag = [...r.klaeger.map(i => '- Kläger: ' + i.kurz), ...r.beklagter.map(i => '- Beklagter: ' + i.kurz)].join('\n') || '- (kein Vortrag erfasst)';
+    const prompt = `${promptHead(a, RULES[a.verfahren])}
+Aufgabe: Orientierung zur Minderungsquote (§ 536 Abs. 1 BGB, Schätzung § 287 ZPO) für folgenden gerügten Mangel – ausschließlich anhand der unten abgedruckten Fundstellen aus der amtlichen Rechtsprechungsdatenbank. Diese Fundstellen sind die einzigen zulässigen Quellen; nenne keine anderen Urteile oder Quoten.
+Mangel: ${r.instanz || r.label}
+Vortrag:
+${vortrag}
+
+Wähle nur Fundstellen, in denen ein Gericht eine Minderungsquote für einen vergleichbaren Mangel festsetzt oder billigt (keine Zinssätze, Kostenquoten, Mieterhöhungen o. Ä.). Je Fundstelle: "id", die Quote in Prozent, ein WÖRTLICHER Ausschnitt (20–200 Zeichen), der diese Quote enthält, und "vergleich" (3 = sehr ähnlicher Mangel, 2 = ähnlich, 1 = nur entfernt). "schaetzung" = deine Punktschätzung in Prozent für den hiesigen Mangel oder null.
+Antworte nur mit JSON: {"entscheidungen":[{"id":"E1","quote":20,"zitat":"…","vergleich":2}],"schaetzung":20}
+
+FUNDSTELLEN:
+${fund.map(f => `[${f.id}] ${f.h.gericht}${f.h.datum ? ', ' + fmtDate(f.h.datum) : ''}${f.h.az ? ', ' + f.h.az : ''}\n„${f.text}“`).join('\n\n')}`;
+    const j = await ask(prompt);
+    const best = new Map();
+    for (const e of (j && j.entscheidungen) || []) {
+      const f = fund.find(x => x.id === String(e.id || '').trim().toUpperCase()); if (!f) continue;
+      const q = Number(e.quote), zitat = String(e.zitat || '');
+      if (!(q > 0 && q <= 100) || !pctsIn(zitat).includes(q) || !findQuote([{ text: f.text }], zitat)) continue;
+      const vg = Math.max(1, Math.min(3, Math.round(Number(e.vergleich) || 1)));
+      const x = best.get(f.h.nr);
+      if (!x || vg > x.vergleich) best.set(f.h.nr, { nr: f.h.nr, gericht: f.h.gericht, datum: f.h.datum, az: f.h.az, titel: f.h.titel, quote: q, zitat, vergleich: vg });
+    }
+    out.urteile = [...best.values()].sort((x, y) => y.vergleich - x.vergleich || x.quote - y.quote);
+    Object.assign(out, minderungSpanne(out.urteile.map(u => ({ v: u.quote, w: u.vergleich })), typeof j.schaetzung === 'number' ? j.schaetzung : null) || {});
+  }
+  a.minderung = a.minderung || {}; a.minderung[r.key] = out;
+  await DB.put(a).catch(() => {});
+  return out;
+}
+async function runMinderung(key) {
+  const a = S.current, r = shownRows(a).find(x => x.key === key); if (!r || S.minBusy.has(key)) return;
+  S.minBusy.add(key); S.minErr.delete(key); renderMain();
+  try { await estimateMinderung(a, r, !!(a.minderung || {})[key]); }
+  catch (e) { S.minErr.set(key, e.message || 'Schätzung fehlgeschlagen'); }
+  S.minBusy.delete(key); if (S.current === a) renderMain();
+}
+const PRAEZ = { hoch: 'Präzision hoch', mittel: 'Präzision mittel', gering: 'Präzision gering' };
+const minBtn = (r, est, cls) => `<button class="${cls || 'note-btn'}" data-minest="${esc(r.key)}"${S.minBusy.has(r.key) ? ' disabled' : ''}>${S.minBusy.has(r.key) ? 'wird geschätzt …' : est ? '↻ neu schätzen' : '% Minderung schätzen'}</button>`;
+// Kurzform für die Gesamttabelle (Merkmal-Zelle)
+function minderungMini(a, r) {
+  if (!isMangelRow(a, r)) return '';
+  const est = (a.minderung || {})[r.key], err = S.minErr.get(r.key);
+  if (S.minBusy.has(r.key)) return `<div class="min-mini"><div class="spin"></div>Minderung wird geschätzt …</div>`;
+  if (est && est.n) return `<div class="min-mini"><button class="min-chip p-${est.praezision}" data-pruefopen="${esc(r.key)}" title="${esc(PRAEZ[est.praezision])} · ${est.n} Entscheidung${est.n === 1 ? '' : 'en'}">Minderung ≈ ${est.punkt} % <span>(${est.von}–${est.bis} %)</span></button></div>`;
+  return `<div class="min-mini">${est ? '<span class="small">keine Quote in der Rspr. gefunden</span> ' : ''}${minBtn(r, est)}${err ? `<div class="min-err">${esc(err)}</div>` : ''}</div>`;
+}
+// Ausführlicher Block zwischen „Norm“ und „Beweisangebote“
+function minderungHtml(a, r) {
+  if (!isMangelRow(a, r)) return '';
+  const est = (a.minderung || {})[r.key], err = S.minErr.get(r.key);
+  let body;
+  if (S.minBusy.has(r.key)) body = `<div class="min-busy"><div class="spin"></div>Rechtsprechung wird gesichtet und ausgewertet …</div>`;
+  else if (!est) body = `<p class="small">Schätzt die Minderungsquote anhand von Entscheidungen der amtlichen Rechtsprechungsdatenbank, die eine Quote für vergleichbare Mängel nennen.</p>`;
+  else if (!est.n) body = `<p class="small">Keine Entscheidung mit Minderungsquote zu diesem Mangel gefunden (${est.gesichtet} Treffer gesichtet). <button class="note-btn" data-rsp="${esc(r.key)}">Rechtsprechung selbst durchsuchen →</button></p>`;
+  else body = `<div class="min-val"><span class="min-big">≈ ${est.punkt} %</span><span class="min-range">Spanne ${est.von}–${est.bis} %</span><span class="min-chip p-${est.praezision}">${PRAEZ[est.praezision]}</span></div>
+      <div class="min-bar" aria-hidden="true"><i style="left:${est.von}%;width:${Math.max(1, est.bis - est.von)}%"></i><b style="left:${est.punkt}%"></b></div>
+      <div class="small">gestützt auf ${est.n} Entscheidung${est.n === 1 ? '' : 'en'}:</div>
+      <ul class="min-list">${est.urteile.map(u => `<li><button class="rsp-pin" data-minopen="${esc(r.key)}" data-nr="${esc(u.nr)}" title="„${esc(u.zitat)}“">⚖ ${esc(u.gericht)}${u.datum ? ', ' + esc(fmtDate(u.datum)) : ''}${u.az ? ', ' + esc(u.az) : ''} – <b>${u.quote} %</b>${u.vergleich === 3 ? ' · sehr ähnlich' : u.vergleich === 1 ? ' · entfernt ähnlich' : ''}</button><a href="${esc(risDocUrl(u.nr))}" target="_blank" rel="noopener" title="Im neuen Tab öffnen">↗</a></li>`).join('')}</ul>`;
+  return `<div class="min-box"><div class="min-head"><span class="pf-lab">Minderung (Rspr.)</span>${minBtn(r, est)}</div>${body}
+    ${err ? `<div class="min-err">${esc(err)}</div>` : ''}
+    ${est && est.n ? '<div class="min-note">Orientierung aus der Rechtsprechungsdatenbank, keine Würdigung des Einzelfalls (§ 287 ZPO).</div>' : ''}</div>`;
+}
 function pinsOf(key) { return key ? ((S.current.judge || {})[key]?.urteile || []) : []; }
 
 // seed (optional): {query, res} – z. B. Trefferliste aus dem Reiter „Prüfung“, damit „zurück zur Trefferliste“ sie zeigt
@@ -2302,7 +2452,7 @@ function streitTable(a, shown, rules, all) {
     const pr = r.beweis.length ? r.beweis.map((it, i) => `<div class="proof-item"><span class="who ${it.partei === 'klaeger' ? 'kl' : 'bk'}">${it.partei === 'klaeger' ? 'Kl.' : 'Bekl.'}</span>${itemHtml(it, idx, 'beweis', i)}</div>`).join('') : '<span class="none">–</span>';
     out += `<tr>
       <td class="merk"><div class="lbl">${esc(r.label)}${r.change ? `<span class="flag ${r.change}">${r.change === 'neu' ? 'NEU' : 'GEÄNDERT'}</span>` : ''}</div>
-        ${r.instanz ? `<span class="inst">${esc(r.instanz)}</span>` : ''}${r.norm ? `<div class="norm">${esc(r.norm)}</div>` : ''}
+        ${r.instanz ? `<span class="inst">${esc(r.instanz)}</span>` : ''}${r.norm ? `<div class="norm">${esc(r.norm)}</div>` : ''}${minderungMini(a, r)}
         <div class="merk-acts"><button class="note-btn" data-pruefopen="${esc(r.key)}">Prüfung →</button><button class="rsp-btn" data-rsp="${esc(r.key)}" title="Passende Entscheidungen in der amtlichen Datenbank suchen">⚖ ${(j.urteile || []).length || ''}</button>
         <button class="note-btn" data-fold="${esc(r.key)}" aria-expanded="true">▴ einklappen</button>
         ${j.checked ? '<span class="court" style="color:var(--green)">✓ geprüft</span>' : ''}</div></td>
@@ -2374,6 +2524,7 @@ function merkmalDetail(a, r, idx) {
       <div><span class="pf-lab">Beweislast</span>${r.last === 'gestuft' ? 'gestuft' : side ? partyName(a, side) : '<span class="small">nicht im Regelmodell</span>'}${r.lastText ? ` <span class="small">– ${esc(r.lastText)}</span>` : ''}${r.verify ? ' <span class="verify">⚑ vom Team zu verifizieren</span>' : ''}${!needsProof(a, r) && r.last ? ' <span class="small">(derzeit nicht beweisbedürftig)</span>' : ''}</div>
       ${r.norm ? `<div><span class="pf-lab">Norm</span>${esc(r.norm)}</div>` : ''}
     </div>
+    ${minderungHtml(a, r)}
     <div class="ml-h">Beweisangebote</div>${pr}${gap ? `<div class="gap">⚠ Beweislücke: ${gap === 'klaeger' ? 'Kläger' : 'Beklagter'} ohne Beweisangebot</div>` : ''}
     ${acts}</div>`;
 }
@@ -2837,6 +2988,12 @@ document.addEventListener('click', async e => {
   }
   if (t.id === 'btnRsp') { openRsp(null); return; }
   if (t.dataset.rsp) { openRsp(t.dataset.rsp); return; }
+  if (t.dataset.minest) { await runMinderung(t.dataset.minest); return; }
+  if (t.dataset.minopen) {
+    const est = (S.current.minderung || {})[t.dataset.minopen] || { urteile: [], queries: [] };
+    const hits = est.urteile.map(u => ({ ...u, treffer: [{ name: 'Minderungsquote ' + u.quote + ' %', text: u.zitat }], queries: [], score: 0 }));
+    openRsp(t.dataset.minopen, t.dataset.nr, { query: est.queries.join('; '), res: { hits, perQuery: [], cached: true } }); return;
+  }
   if (t.dataset.rspopen) {
     if (t.dataset.rspkey && !(S.preview && S.preview.kind === 'rsp' && S.preview.key === t.dataset.rspkey)) { openRsp(t.dataset.rspkey, t.dataset.rspopen, null, S.preview && S.preview.kind === 'pruef' ? S.preview.key : null); return; }
     S.preview.detail = t.dataset.rspopen; drawRsp(); return;
