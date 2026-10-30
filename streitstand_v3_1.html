@@ -925,7 +925,7 @@ const S = {
   busy: null, error: null, preview: null, newForm: null, pendingFolder: null, openNotes: new Set(),
   pruefRsp: {}, // Prüfung: Suchergebnisse je „key#Schritt“
   openAntrag: new Set(), openRow: new Set(), antragFor: null, viewTable: false, // Übersicht: aufgeklappte Anträge/Merkmale, Gesamttabelle
-  unfold: new Set(), unfoldFor: null // Gesamttabelle: aufgeklappte unstreitige / nicht bestrittene Merkmale
+  fold: new Map(), foldFor: null // Gesamttabelle: vom Nutzer ein-/ausgeklappte Merkmale (key -> true = eingeklappt)
 };
 const memFiles = new Map(); // aktenId -> [{path, file}] (Fallback ohne Ordner-Handle)
 
@@ -2272,23 +2272,23 @@ function itemHtml(it, rowIdx, kind, i) {
 // Unstreitige und nicht bestrittene Merkmale sind in der Gesamttabelle standardmäßig eingeklappt
 const FOLD = ['unstreitig', 'nicht_bestritten'];
 const foldable = (a, r) => FOLD.includes(effStatus(a, r));
+const isFolded = (a, r) => S.fold.has(r.key) ? S.fold.get(r.key) : foldable(a, r);
 function streitTable(a, shown, rules, all) {
   if (!shown.length) return '<div class="empty"><p>Keine Prüfpunkte für diesen Filter.</p></div>'; let out = ''; let lastG = null;
-  if (S.unfoldFor !== a.id) { S.unfoldFor = a.id; S.unfold = new Set(); }
-  const nFold = shown.filter(r => foldable(a, r)).length, nFolded = shown.filter(r => foldable(a, r) && !S.unfold.has(r.key)).length;
+  if (S.foldFor !== a.id) { S.foldFor = a.id; S.fold = new Map(); }
+  const nFolded = shown.filter(r => isFolded(a, r)).length;
   for (const r of shown) {
     const idx = all.indexOf(r);
     if (r.gid !== lastG) { out += groupRow(rules.groups.find(x => x.id === r.gid), null, shown.filter(x => x.gid === r.gid).length); lastG = r.gid; }
     const j = (a.judge || {})[r.key] || {};
     const st = effStatus(a, r);
     const side = sideOf(a, r.last);
-    const fold = foldable(a, r);
-    if (fold && !S.unfold.has(r.key)) {
+    if (isFolded(a, r)) {
       const n = r.klaeger.length + r.beklagter.length + r.beweis.length;
       out += `<tr class="folded">
       <td class="merk"><div class="lbl">${esc(r.label)}${r.change ? `<span class="flag ${r.change}">${r.change === 'neu' ? 'NEU' : 'GEÄNDERT'}</span>` : ''}</div>
         ${r.instanz ? `<span class="inst">${esc(r.instanz)}</span>` : ''}</td>
-      <td class="fold" colspan="2"><button class="note-btn" data-unfold="${esc(r.key)}" aria-expanded="false">▸ Vortrag einblenden${n ? ` · ${n} Angabe${n === 1 ? '' : 'n'}` : ''}</button>${j.checked ? '<span class="court" style="color:var(--green)">✓ geprüft</span>' : ''}</td>
+      <td class="fold" colspan="2"><button class="note-btn" data-fold="${esc(r.key)}" aria-expanded="false">▸ Vortrag einblenden${n ? ` · ${n} Angabe${n === 1 ? '' : 'n'}` : ''}</button>${j.checked ? '<span class="court" style="color:var(--green)">✓ geprüft</span>' : ''}</td>
       <td class="status" data-label="Status"><span class="st-badge s-${st}" title="${esc(STATUS[st].label + (r.begruendung ? ' – ' + r.begruendung : ''))}">${esc(STATUS[st].short)}</span></td>
       <td class="last" data-label="Beweislast"><span class="last-who muted">${r.last === 'gestuft' ? 'gestuft' : side ? (side === 'klaeger' ? 'Kläger' : 'Beklagter') : '–'}</span></td>
       <td class="proof"></td>
@@ -2304,7 +2304,7 @@ function streitTable(a, shown, rules, all) {
       <td class="merk"><div class="lbl">${esc(r.label)}${r.change ? `<span class="flag ${r.change}">${r.change === 'neu' ? 'NEU' : 'GEÄNDERT'}</span>` : ''}</div>
         ${r.instanz ? `<span class="inst">${esc(r.instanz)}</span>` : ''}${r.norm ? `<div class="norm">${esc(r.norm)}</div>` : ''}
         <div class="merk-acts"><button class="note-btn" data-pruefopen="${esc(r.key)}">Prüfung →</button><button class="rsp-btn" data-rsp="${esc(r.key)}" title="Passende Entscheidungen in der amtlichen Datenbank suchen">⚖ ${(j.urteile || []).length || ''}</button>
-        ${fold ? `<button class="note-btn" data-unfold="${esc(r.key)}" aria-expanded="true">▴ einklappen</button>` : ''}
+        <button class="note-btn" data-fold="${esc(r.key)}" aria-expanded="true">▴ einklappen</button>
         ${j.checked ? '<span class="court" style="color:var(--green)">✓ geprüft</span>' : ''}</div></td>
       <td class="side kl" data-label="Kläger trägt vor">${kl}</td>
       <td class="side bk" data-label="Beklagter erwidert">${bk}</td>
@@ -2313,8 +2313,10 @@ function streitTable(a, shown, rules, all) {
       <td class="proof" data-label="Beweisangebote">${pr}${gap ? `<div class="gap" title="${gap === 'klaeger' ? 'Kläger' : 'Beklagter'} ist beweisbelastet, hat aber keinen Beweis angeboten">⚠ Beweislücke</div>` : ''}</td>
     </tr>`;
   }
-  const foldBar = nFold ? `<div class="fold-bar small">${nFolded ? `${nFolded} unstreitige${nFolded === 1 ? 's' : ''} / nicht bestrittene${nFolded === 1 ? 's' : ''} Merkmal${nFolded === 1 ? '' : 'e'} eingeklappt` : 'Unstreitige / nicht bestrittene Merkmale aufgeklappt'}
-    <button class="note-btn" id="${nFolded ? 'btnUnfoldAll' : 'btnFoldAll'}">${nFolded ? 'Alle aufklappen' : 'Alle einklappen'}</button></div>` : '';
+  const n = shown.length, custom = shown.some(r => S.fold.has(r.key));
+  const foldBar = `<div class="fold-bar small">${nFolded ? `${nFolded} von ${n} Merkmal${n === 1 ? '' : 'en'} eingeklappt` : 'Alle Merkmale aufgeklappt'}
+    ${nFolded ? '<button class="note-btn" id="btnUnfoldAll">Alle aufklappen</button>' : ''}${nFolded < n ? '<button class="note-btn" id="btnFoldAll">Alle einklappen</button>' : ''}
+    ${custom ? '<button class="note-btn" id="btnFoldReset" title="Nur unstreitige und nicht bestrittene Merkmale einklappen">Standard</button>' : ''}</div>`;
   return `${foldBar}<div class="card table-wrap"><table class="st"><thead><tr><th>Merkmal</th><th class="th-kl">Kläger trägt vor</th><th class="th-bk">Beklagter erwidert</th><th>Status</th><th>Beweislast</th><th>Beweisangebote</th></tr></thead><tbody>${out}</tbody></table></div>`;
 }
 
@@ -2809,9 +2811,9 @@ document.addEventListener('click', async e => {
     const el = S.openAntrag.has(k) && document.getElementById('ap-' + k); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     return;
   }
-  if (t.dataset.unfold) { const k = t.dataset.unfold; S.unfold.has(k) ? S.unfold.delete(k) : S.unfold.add(k); renderMain(); return; }
-  if (t.id === 'btnUnfoldAll') { S.unfold = new Set(shownRows(S.current).filter(r => foldable(S.current, r)).map(r => r.key)); renderMain(); return; }
-  if (t.id === 'btnFoldAll') { S.unfold = new Set(); renderMain(); return; }
+  if (t.dataset.fold) { const r = shownRows(S.current).find(x => x.key === t.dataset.fold); if (r) S.fold.set(r.key, !isFolded(S.current, r)); renderMain(); return; }
+  if (t.id === 'btnUnfoldAll' || t.id === 'btnFoldAll') { S.fold = new Map(shownRows(S.current).map(r => [r.key, t.id === 'btnFoldAll'])); renderMain(); return; }
+  if (t.id === 'btnFoldReset') { S.fold = new Map(); renderMain(); return; }
   if (t.dataset.mrow) { const k = t.dataset.mrow; S.openRow.has(k) ? S.openRow.delete(k) : S.openRow.add(k); renderMain(); return; }
   if (t.id === 'btnAntAll' || t.id === 'btnAntNone') { S.openAntrag = new Set(t.id === 'btnAntAll' ? [...antraegeOf(S.current).kl.map(x => x.id), 'REST', 'SONST', ...RULES[S.current.verfahren].groups.filter(g => g.optional).map(g => 'OPT:' + g.id)] : []); if (t.id === 'btnAntNone') S.openRow = new Set(); renderMain(); return; }
   if (t.dataset.view) { S.viewTable = t.dataset.view === 'tabelle'; renderMain(); return; }
