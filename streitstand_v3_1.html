@@ -148,6 +148,11 @@
   td.merk .inst { display: inline-block; margin-top: 5px; font-size: 12px; color: var(--accent-strong); background: var(--accent-soft); border-radius: 6px; padding: 1px 7px; }
   td.merk .norm { color: var(--faint); font-size: 12px; margin-top: 4px; }
   td.side { width: 22%; }
+  table.st tr.folded td { padding-top: 9px; padding-bottom: 9px; color: var(--muted); }
+  table.st tr.folded td.merk .lbl { font-weight: 500; }
+  table.st td.fold .court { margin-left: 10px; }
+  .fold-bar { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; color: var(--muted); }
+  .fold-bar .note-btn { white-space: nowrap; }
   .item { margin-bottom: 6px; }
   .item:last-child { margin-bottom: 0; }
   .say { display: block; width: 100%; text-align: left; border: 1px solid transparent; background: transparent; padding: 5px 8px; margin: -5px -8px; border-radius: 8px; line-height: 1.45; transition: background .12s; }
@@ -214,9 +219,13 @@
     table.st td.side .say:hover { background: var(--paper); }
     table.st td.proof { grid-area: proof; padding-top: 4px; }
     table.st td.proof::before { content: attr(data-label); display: block; font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+    table.st tbody tr.folded { grid-template-areas: "merk merk" "status last" "fold fold"; padding: 10px 16px; }
+    table.st tr.folded td.fold { grid-area: fold; }
+    table.st tr.folded td.proof { display: none; }
   }
   @container (max-width: 480px) {
     table.st tbody tr:not(.group) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "merk" "status" "last" "kl" "bk" "proof"; }
+    table.st tbody tr.folded { grid-template-areas: "merk" "status" "last" "fold"; }
   }
   details.discard { margin-top: 16px; padding: 12px 16px; }
   details.discard summary { cursor: pointer; font-weight: 600; color: var(--muted); font-size: 13px; }
@@ -915,7 +924,8 @@ const S = {
   akten: [], current: null, docs: null, filter: 'alle', showDocs: false,
   busy: null, error: null, preview: null, newForm: null, pendingFolder: null, openNotes: new Set(),
   pruefRsp: {}, // Prüfung: Suchergebnisse je „key#Schritt“
-  openAntrag: new Set(), openRow: new Set(), antragFor: null, viewTable: false // Übersicht: aufgeklappte Anträge/Merkmale, Gesamttabelle
+  openAntrag: new Set(), openRow: new Set(), antragFor: null, viewTable: false, // Übersicht: aufgeklappte Anträge/Merkmale, Gesamttabelle
+  unfold: new Set(), unfoldFor: null // Gesamttabelle: aufgeklappte unstreitige / nicht bestrittene Merkmale
 };
 const memFiles = new Map(); // aktenId -> [{path, file}] (Fallback ohne Ordner-Handle)
 
@@ -2259,14 +2269,32 @@ function itemHtml(it, rowIdx, kind, i) {
     <span class="anc${it.fixed ? ' fixed' : ''}" title="${it.fixed ? 'Fundstelle automatisch korrigiert (KI nannte ' + esc(it.fixed) + ')' : 'Zitat wörtlich im Dokument gefunden'}">${esc(it.anchor)}</span>${isNew ? '<span class="new-tag">NEU</span>' : ''}</button></div>`;
 }
 
+// Unstreitige und nicht bestrittene Merkmale sind in der Gesamttabelle standardmäßig eingeklappt
+const FOLD = ['unstreitig', 'nicht_bestritten'];
+const foldable = (a, r) => FOLD.includes(effStatus(a, r));
 function streitTable(a, shown, rules, all) {
   if (!shown.length) return '<div class="empty"><p>Keine Prüfpunkte für diesen Filter.</p></div>'; let out = ''; let lastG = null;
+  if (S.unfoldFor !== a.id) { S.unfoldFor = a.id; S.unfold = new Set(); }
+  const nFold = shown.filter(r => foldable(a, r)).length, nFolded = shown.filter(r => foldable(a, r) && !S.unfold.has(r.key)).length;
   for (const r of shown) {
     const idx = all.indexOf(r);
     if (r.gid !== lastG) { out += groupRow(rules.groups.find(x => x.id === r.gid), null, shown.filter(x => x.gid === r.gid).length); lastG = r.gid; }
     const j = (a.judge || {})[r.key] || {};
     const st = effStatus(a, r);
     const side = sideOf(a, r.last);
+    const fold = foldable(a, r);
+    if (fold && !S.unfold.has(r.key)) {
+      const n = r.klaeger.length + r.beklagter.length + r.beweis.length;
+      out += `<tr class="folded">
+      <td class="merk"><div class="lbl">${esc(r.label)}${r.change ? `<span class="flag ${r.change}">${r.change === 'neu' ? 'NEU' : 'GEÄNDERT'}</span>` : ''}</div>
+        ${r.instanz ? `<span class="inst">${esc(r.instanz)}</span>` : ''}</td>
+      <td class="fold" colspan="2"><button class="note-btn" data-unfold="${esc(r.key)}" aria-expanded="false">▸ Vortrag einblenden${n ? ` · ${n} Angabe${n === 1 ? '' : 'n'}` : ''}</button>${j.checked ? '<span class="court" style="color:var(--green)">✓ geprüft</span>' : ''}</td>
+      <td class="status" data-label="Status"><span class="st-badge s-${st}" title="${esc(STATUS[st].label + (r.begruendung ? ' – ' + r.begruendung : ''))}">${esc(STATUS[st].short)}</span></td>
+      <td class="last" data-label="Beweislast"><span class="last-who muted">${r.last === 'gestuft' ? 'gestuft' : side ? (side === 'klaeger' ? 'Kläger' : 'Beklagter') : '–'}</span></td>
+      <td class="proof"></td>
+    </tr>`;
+      continue;
+    }
     const gap = proofGap(a, r);
     const lastTitle = [r.lastText, r.verify ? '⚑ vom Team zu verifizieren' : ''].filter(Boolean).join(' – ');
     const kl = r.klaeger.length ? r.klaeger.map((it, i) => itemHtml(it, idx, 'klaeger', i)).join('') : '<span class="none">–</span>';
@@ -2276,6 +2304,7 @@ function streitTable(a, shown, rules, all) {
       <td class="merk"><div class="lbl">${esc(r.label)}${r.change ? `<span class="flag ${r.change}">${r.change === 'neu' ? 'NEU' : 'GEÄNDERT'}</span>` : ''}</div>
         ${r.instanz ? `<span class="inst">${esc(r.instanz)}</span>` : ''}${r.norm ? `<div class="norm">${esc(r.norm)}</div>` : ''}
         <div class="merk-acts"><button class="note-btn" data-pruefopen="${esc(r.key)}">Prüfung →</button><button class="rsp-btn" data-rsp="${esc(r.key)}" title="Passende Entscheidungen in der amtlichen Datenbank suchen">⚖ ${(j.urteile || []).length || ''}</button>
+        ${fold ? `<button class="note-btn" data-unfold="${esc(r.key)}" aria-expanded="true">▴ einklappen</button>` : ''}
         ${j.checked ? '<span class="court" style="color:var(--green)">✓ geprüft</span>' : ''}</div></td>
       <td class="side kl" data-label="Kläger trägt vor">${kl}</td>
       <td class="side bk" data-label="Beklagter erwidert">${bk}</td>
@@ -2284,7 +2313,9 @@ function streitTable(a, shown, rules, all) {
       <td class="proof" data-label="Beweisangebote">${pr}${gap ? `<div class="gap" title="${gap === 'klaeger' ? 'Kläger' : 'Beklagter'} ist beweisbelastet, hat aber keinen Beweis angeboten">⚠ Beweislücke</div>` : ''}</td>
     </tr>`;
   }
-  return `<div class="card table-wrap"><table class="st"><thead><tr><th>Merkmal</th><th class="th-kl">Kläger trägt vor</th><th class="th-bk">Beklagter erwidert</th><th>Status</th><th>Beweislast</th><th>Beweisangebote</th></tr></thead><tbody>${out}</tbody></table></div>`;
+  const foldBar = nFold ? `<div class="fold-bar small">${nFolded ? `${nFolded} unstreitige${nFolded === 1 ? 's' : ''} / nicht bestrittene${nFolded === 1 ? 's' : ''} Merkmal${nFolded === 1 ? '' : 'e'} eingeklappt` : 'Unstreitige / nicht bestrittene Merkmale aufgeklappt'}
+    <button class="note-btn" id="${nFolded ? 'btnUnfoldAll' : 'btnFoldAll'}">${nFolded ? 'Alle aufklappen' : 'Alle einklappen'}</button></div>` : '';
+  return `${foldBar}<div class="card table-wrap"><table class="st"><thead><tr><th>Merkmal</th><th class="th-kl">Kläger trägt vor</th><th class="th-bk">Beklagter erwidert</th><th>Status</th><th>Beweislast</th><th>Beweisangebote</th></tr></thead><tbody>${out}</tbody></table></div>`;
 }
 
 /* ========================= Übersicht nach Klageanträgen ========================= */
@@ -2778,6 +2809,9 @@ document.addEventListener('click', async e => {
     const el = S.openAntrag.has(k) && document.getElementById('ap-' + k); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     return;
   }
+  if (t.dataset.unfold) { const k = t.dataset.unfold; S.unfold.has(k) ? S.unfold.delete(k) : S.unfold.add(k); renderMain(); return; }
+  if (t.id === 'btnUnfoldAll') { S.unfold = new Set(shownRows(S.current).filter(r => foldable(S.current, r)).map(r => r.key)); renderMain(); return; }
+  if (t.id === 'btnFoldAll') { S.unfold = new Set(); renderMain(); return; }
   if (t.dataset.mrow) { const k = t.dataset.mrow; S.openRow.has(k) ? S.openRow.delete(k) : S.openRow.add(k); renderMain(); return; }
   if (t.id === 'btnAntAll' || t.id === 'btnAntNone') { S.openAntrag = new Set(t.id === 'btnAntAll' ? [...antraegeOf(S.current).kl.map(x => x.id), 'REST', 'SONST', ...RULES[S.current.verfahren].groups.filter(g => g.optional).map(g => 'OPT:' + g.id)] : []); if (t.id === 'btnAntNone') S.openRow = new Set(); renderMain(); return; }
   if (t.dataset.view) { S.viewTable = t.dataset.view === 'tabelle'; renderMain(); return; }
